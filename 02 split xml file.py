@@ -40,9 +40,12 @@ if not os.path.exists(destination):
     os.makedirs(destination)
 
 # loop 需要處理的資料夾
-for file in os.listdir(gv.before_big_file_directory):
+for index , file in enumerate(os.listdir(gv.before_big_file_directory)):
     split_xml_file(filename = os.path.join(gv.before_big_file_directory, file), 
                    destination_directory = gv.before_file_directory)
+    if index % 100 == 0:
+        print(f"Processing {index + 1} files")
+    
 
 time_end = time.time()
 print("End time: " + str(time_end))
