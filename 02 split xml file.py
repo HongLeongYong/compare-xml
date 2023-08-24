@@ -31,6 +31,8 @@ def split_xml_file(filename, destination_directory):
                     encoding="utf-8", xml_declaration=True)
 
 
+time_start = time.time()
+print("Start time: " + str(time_start))
 
 # 設定目標🎯檔案路徑
 destination = gv.before_file_directory
@@ -42,3 +44,6 @@ for file in os.listdir(gv.before_big_file_directory):
     split_xml_file(filename = os.path.join(gv.before_big_file_directory, file), 
                    destination_directory = gv.before_file_directory)
 
+time_end = time.time()
+print("End time: " + str(time_end))
+print("Total time: " + str(time_end - time_start))
