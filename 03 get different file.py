@@ -23,17 +23,20 @@ for file in after_file_names_2:
 
 # 把結果寫入 txt 檔案
 with open(os.path.join(gv.result_directory, "result.txt"), "w", encoding="utf-8") as f:
-    f.write("before directory len" + str(len(before_file_names)) + "\n")
-    f.write("after directory len" + str(len(after_file_names_2)) + "\n")
+    f.write("before directory len: " + str(len(before_file_names)) + "\n")
+    f.write("after directory len: " + str(len(after_file_names_2)) + "\n")
     f.write("----------------------------------------------")
-    f.write("before directory 有，after directory 沒有的檔案:\n")
-    for file in before_file_names_2:
-        f.write(file + "\n")
+    if before_file_names_2:
+        f.write("before directory 有, after directory 沒有的檔案: "+ str(len(before_file_names_2)) + "\n")
+        for file in before_file_names_2:
+            f.write(file + "\n")
+
     f.write("\n")
-    f.write("after directory 有，before directory 沒有的檔案:\n")
-    for file in after_file_names:
-        f.write(file + "\n")
-    f.write("\n")
+
+    if after_file_names:
+        f.write("after directory 有, before directory 沒有的檔案: "+ str(len(after_file_names)) + "\n")
+        for file in after_file_names:
+            f.write(file + "\n")
 
 time_end = time.time()
 print("花費時間: ", time_end - time_start, "秒")
