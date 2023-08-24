@@ -69,11 +69,12 @@ for index, file in enumerate(os.listdir(gv.before_file_directory)):
         after_tree = ET.ElementTree(ET.fromstring(after_file_string))
         after_root = after_tree.getroot()
 
-        differences = find_differences(before_root, after_root, path=file)
+        differences = find_differences(before_root, after_root, key = file)
         output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
 
-        if index % 100 == 0:
+        if index == 100:
             print(f"Processing {index + 1} files")
+            break
 
 output_df.to_excel(os.path.join(gv.result_directory, "output.xlsx"), index=True)
 
