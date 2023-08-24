@@ -5,7 +5,7 @@ import global_variable as gv
 
 # read file name from txt
 file_list = []
-with open('need.txt', "r", encoding="utf-8") as f:
+with open(os.path.join(gv.result_directory,'need.txt'), "r", encoding="utf-8") as f:
     for line in f:
         file_list.append(line.replace('\n', ''))
     
