@@ -23,8 +23,11 @@ def find_differences(elem1, elem2, key, path='.'):
         
     if elem1.attrib != elem2.attrib:
         differences.append({"Key": key, "Path": path, "Type": "Attribute Mismatch", "Description": f"{elem1.attrib} != {elem2.attrib}"})
-        
-    if elem1.text != elem2.text:
+
+    text1 = elem1.text if elem1.text is not None else ""
+    text2 = elem2.text if elem2.text is not None else ""
+
+    if text1 != text2:
         differences.append({"Key": key, "Path": path, "Type": "Text Mismatch", "Description": f"{elem1.text} != {elem2.text}"})
 
     children1 = list(elem1)
@@ -36,10 +39,10 @@ def find_differences(elem1, elem2, key, path='.'):
 
     if len(children1) > len(children2):
         for idx, child in enumerate(children1[len(children2):]):
-            differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children2)+idx}]", "Type": "Missing in second tree", "Description": "Element is missing"})
+            differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children2)+idx}]", "Type": "Missing in after", "Description": "Element is missing"})
     elif len(children1) < len(children2):
         for idx, child in enumerate(children2[len(children1):]):
-            differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children1)+idx}]", "Type": "Missing in first tree", "Description": "Element is missing"})
+            differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children1)+idx}]", "Type": "Missing in before", "Description": "Element is missing"})
 
     return differences
 
