@@ -28,7 +28,7 @@ def find_differences(elem1, elem2, key, path='.'):
     text2 = elem2.text if elem2.text is not None else ""
 
     if text1 != text2:
-        differences.append({"Key": key, "Path": path, "Type": "Text Mismatch", "Description": f"{elem1.text} != {elem2.text}"})
+        differences.append({"Key": key, "Path": path, "Type": "Text Mismatch", "Description": f"{text1} != {text2}"})
 
     children1 = list(elem1)
     children2 = list(elem2)
