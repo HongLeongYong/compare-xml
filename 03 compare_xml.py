@@ -4,6 +4,7 @@ import global_variable as gv
 import re
 import xml.etree.ElementTree as ET
 import pandas as pd 
+import time
 
 def reprocess_string(input_string):
     input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
@@ -42,9 +43,12 @@ def find_differences(elem1, elem2, path='.'):
 
     return differences
 
+start_time = time.time()
+print("Start time: " + str(start_time))
+
 output_df = pd.DataFrame()
 
-for file in os.listdir(gv.before_file_directory):
+for index, file in enumerate(os.listdir(gv.before_file_directory)):
     before_file = open(os.path.join(gv.before_file_directory, file), "r", encoding="utf-8")
     before_file_string = before_file.read()
     before_file.close()
@@ -63,9 +67,13 @@ for file in os.listdir(gv.before_file_directory):
         after_root = after_tree.getroot()
 
         differences = find_differences(before_root, after_root, path=file)
-        output_df = pd.concat([output_df, pd.DataFrame(differences)].reset_index(drop=True), axis=0)
+        output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
 
-output_df.to_excel(os.path.join(gv.result_directory, file + ".xlsx"), index=False, encoding="utf-8-sig")
+        if index % 100 == 0:
+            print(f"Processing {index} files")
 
+output_df.to_excel(os.path.join(gv.result_directory, file + ".xlsx"), index=True, encoding="utf-8")
 
-
+end_time = time.time()
+print("End time: " + str(end_time))
+print("Total time: " + str(end_time - start_time))
