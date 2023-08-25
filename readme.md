@@ -12,7 +12,7 @@
 有時 大xml 在結尾沒(.xml), 這程式能加 file type(.xml)  
 
 ## 3. 大xml 拆分成 小xml  
-使用 `02 split xml file.py`
+使用 `02 split xml file.py` 
 大xml 拆分成 n個小xml  
 
 ## 4. 找出 before & after 的差異檔案  
