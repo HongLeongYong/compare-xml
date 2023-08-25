@@ -1,25 +1,66 @@
-# 使用方法  
-本 respository 適合用於把大xml分割成小xml，然後進行**比對**  
+# 大 XML 分割與比對工具
 
-## 1. 更新 global_variable.py  
-需指定  
-1. 大 xml 檔案路徑  
-2. 分割後的 xml 檔案路徑  
-3. 結果檔案路徑  
+本 repository 提供一套工具，用於將大型 XML 檔案拆分成較小的片段，並進行資料比對。
 
-## 2. 加入 file type  
-使用 `01 change file name.py`  
-有時 大xml 在結尾沒(.xml), 這程式能加 file type(.xml)  
+## 目錄
 
-## 3. 大xml 拆分成 小xml  
-使用 `02 split xml file.py`  
-大xml 拆分成 n個小xml  
+- [安裝](#安裝)
+- [使用方法](#使用方法)
+  - [設定全局變數](#1-設定全局變數)
+  - [檔名調整](#2-檔名調整)
+  - [XML 拆分](#3-xml-拆分)
+  - [找出差異](#4-找出差異)
+  - [XML 比對](#5-xml-比對)
 
-## 4. 找出 before & after 的差異檔案  
-使用 `03 get different file.py`  
-找出 before 資料夾 和 after 資料夾中 檔案的不同  
-如果設定 `move_file_boolean = True`, 有移動不同檔案到指定資料夾功能  
+## 安裝
 
-## 5. 對比 xml 資料💾  
-使用 `04 compare_xml.py`  
-需自行調整 `def reprocess_string()`  
+請將本 repository 克隆到本地端，並確保 Python 環境已正確設置。
+
+```bash
+git clone https://github.com/your_username/your_repository.git
+```
+
+## 使用方法
+
+### 1. 設定全局變數
+
+- **檔案**: `global_variable.py`
+
+  您需要指定以下三個路徑：
+  1. 大 XML 檔案的存放位置。
+  2. 分割後的 XML 檔案存放位置。
+  3. 比對結果的存放位置。
+
+### 2. 檔名調整
+
+- **使用腳本**: `01 change file name.py`
+
+  如果您的大型 XML 檔案沒有 `.xml` 擴展名，這個腳本可以幫您自動添加。
+
+### 3. XML 拆分
+
+- **使用腳本**: `02 split xml file.py`
+
+  此腳本會將大型 XML 檔案拆分成多個較小的片段。
+
+### 4. 找出差異
+
+- **使用腳本**: `03 get different file.py`
+
+  此腳本會比對 "before" 和 "after" 資料夾中的檔案，並找出不同。
+
+  > **註**: 如果您設置 `move_file_boolean = True`，腳本會將不同的檔案移動到指定的資料夾。
+
+### 5. XML 比對
+
+- **使用腳本**: `04 compare_xml.py`
+
+  這個腳本會對拆分後的 XML 進行資料比對。您可能需要根據您的需要調整 `def reprocess_string()` 函數。
+
+## 貢獻
+
+如果您有任何建議或問題，請開啟一個 issue 或提交一個 pull request。
+
+## 授權
+
+本項目使用 [MIT License](LICENSE)。
