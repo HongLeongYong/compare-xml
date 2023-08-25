@@ -61,7 +61,7 @@ git clone https://github.com/your_username/your_repository.git
 
 如果您有任何建議或問題，📬 請開啟一個 issue 或提交一個 pull request。
 
-## 授權 📜
+## 授權
 
 🔒 本項目使用 [MIT License](LICENSE).
 
