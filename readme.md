@@ -37,9 +37,9 @@ git clone https://github.com/your_username/your_repository.git
 
   📌 如果您的大型 XML 檔案沒有 `.xml` 擴展名，這個腳本可以幫您自動添加。
 
-### 3. XML 拆分 📤📥
+### 3. XML 拆分 📤📥 [code](02_split_xml_file.py)
 
-- **使用腳本**: `02 split xml file.py`
+- **使用腳本**: `02_split_xml_file.py`
 
   ✂️ 此腳本會將大型 XML 檔案拆分成多個較小的片段。
 
@@ -57,7 +57,7 @@ git clone https://github.com/your_username/your_repository.git
 
   🔄 這個腳本會對拆分後的 XML 進行資料比對。您可能需要根據您的需要調整 `def reprocess_string()` 函數。
 
-## 貢獻
+## 貢獻 
 
 如果您有任何建議或問題，📬 請開啟一個 issue 或提交一個 pull request。
 
