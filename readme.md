@@ -31,9 +31,9 @@ git clone https://github.com/your_username/your_repository.git
   2. 📦 分割後的 XML 檔案存放位置。
   3. 🎯 比對結果的存放位置。
 
-### 2. 檔名調整 📝
+### 2. 檔名調整 📝 [code](01_change_file_name.py)
 
-- **使用腳本**: `01 change file name.py`
+- **使用腳本**: `01_change_file_name.py`
 
   📌 如果您的大型 XML 檔案沒有 `.xml` 擴展名，這個腳本可以幫您自動添加。
 
@@ -43,17 +43,17 @@ git clone https://github.com/your_username/your_repository.git
 
   ✂️ 此腳本會將大型 XML 檔案拆分成多個較小的片段。
 
-### 4. 找出差異 🔍
+### 4. 找出差異 🔍 [code](03_get_different_file.py)
 
-- **使用腳本**: `03 get different file.py`
+- **使用腳本**: `03_get_different_file.py`
 
   🕵️ 此腳本會比對 "before" 和 "after" 資料夾中的檔案，並找出不同。
 
   > **註**: 📤 如果您設置 `move_file_boolean = True`，腳本會將不同的檔案移動到指定的資料夾。
 
-### 5. XML 比對 📊
+### 5. XML 比對 📊 [code](04_compare_xml.py)
 
-- **使用腳本**: `04 compare_xml.py`
+- **使用腳本**: `04_compare_xml.py`
 
   🔄 這個腳本會對拆分後的 XML 進行資料比對。您可能需要根據您的需要調整 `def reprocess_string()` 函數。
 
