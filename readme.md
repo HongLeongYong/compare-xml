@@ -1,3 +1,7 @@
+<div align="center">
+  <img src=./docs/images/title.png>
+</div>
+
 # 大 XML 分割與比對工具
 
 本 repository 提供一套工具，用於將大型 XML 檔案拆分成較小的片段，並進行資料比對。
