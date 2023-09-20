@@ -6,6 +6,25 @@ import xml.etree.ElementTree as ET
 import pandas as pd 
 import time
 
+# 獲取第一個出現的 text 並指定為 key
+def find_first_text(element):
+    if element.text and element.text.strip():
+        return element.text.strip()
+    
+    for child in element:
+        text = find_first_text(child)
+        if text:
+            return text
+    return None
+
+# 迭代第一層子節點，並將每個子節點的 key 與 index 存入 blocks
+def extract_blocks(tree):
+    blocks = []
+    for i, child in enumerate(tree):
+        key = find_first_text(child)
+        blocks.append((index,key))
+    return blocks
+
 def reprocess_string(input_string):
     input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
     input_string = re.sub('<TDCOVTITLE>.*</TDCOVTITLE>', '', input_string)
@@ -34,8 +53,43 @@ def find_differences(elem1, elem2, key, path='.'):
     children2 = list(elem2)
     
     for idx, (child1, child2) in enumerate(zip(children1, children2)):
-        child_path = f"{path}/{child1.tag}[{idx}]"
-        differences.extend(find_differences(child1, child2, key= key, path=child_path))
+        #如果 child 數量不相等
+        if len(child1) != len(child2):
+
+            before_blocks = extract_blocks(child1)
+            after_blocks = extract_blocks(child2)
+
+            tag_name = child1[0].tag
+
+            if len(before_blocks) > len(after_blocks):
+                after_dict = {key: index for index, key in after_blocks}
+
+                for before_index, before_key in before_blocks:
+                    after_index = after_dict.get(before_key)
+                    if after_index is not None:
+                        child_path = f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
+                        differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
+                    else:
+                        differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Missing in after", "Description": "Element is missing"})
+                        for elem in child1[before_index].iter():
+                            differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag} : {elem.text}"})
+
+            else:
+                before_dict = {key: index for index, key in before_blocks}
+
+                for after_index, after_key in after_blocks:
+                    before_index = before_dict.get(after_key)
+                    if before_index is not None:
+                        child_path = f"{path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
+                        differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
+                    else:
+                        differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Missing in before", "Description": "Element is missing"})
+                        for elem in child2[after_index].iter():
+                            differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Show Missing", "Description": f"{elem.tag} : {elem.text}"})
+            
+        else:
+            child_path = f"{path}/{child1.tag}[{idx}]"
+            differences.extend(find_differences(child1, child2, key= key, path=child_path))
 
     if len(children1) > len(children2):
         for idx, child in enumerate(children1[len(children2):]):
@@ -78,6 +132,7 @@ for index, file in enumerate(os.listdir(gv.before_file_directory)):
     ## break point
     # if index == 1000:
     #     break
+print(f"Processing {index + 1} files")
 
 output_df.to_excel(os.path.join(gv.result_directory, "output.xlsx"), index=True)
 
