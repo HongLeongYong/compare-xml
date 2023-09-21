@@ -32,12 +32,12 @@ def find_first_three_text(element):
     else:
         return None
     
-# 尋找是否有 <CD_AMOUNT> 的 text
-def find_amount_text(element):
-    if element.tag == 'CD_AMOUNT' and element.text and element.text.strip():
+# 尋找是否有 <CD_POST_DOC> 的 text
+def find_cd_post_doc_text(element):
+    if element.tag == 'CD_POST_DOC' and element.text and element.text.strip():
         return element.text.strip()
     for child in element:
-        result = find_amount_text(child)
+        result = find_cd_post_doc_text(child)
         if result:
             return result
     return None
@@ -46,9 +46,9 @@ def find_amount_text(element):
 def extract_blocks(tree):
     blocks = []
     for index, child in enumerate(tree):
-        cd_amount_key = find_amount_text(child)
-        if cd_amount_key:
-            key = cd_amount_key
+        cd_post_doc_key = find_cd_post_doc_text(child)
+        if cd_post_doc_key:
+            key = cd_post_doc_key
         else:
             key = find_first_three_text(child)
         blocks.append((index, key))
