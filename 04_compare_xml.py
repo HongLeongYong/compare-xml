@@ -8,10 +8,8 @@ import global_variable as gv
 
 # 獲取第一個、第二個和第三個出現的 text 並指定為 key
 def find_first_three_text(element):
-
-
     found_texts = []
-
+    
     def helper(ele):
         nonlocal found_texts
         if len(found_texts) >= 3:
