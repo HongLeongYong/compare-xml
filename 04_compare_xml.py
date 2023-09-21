@@ -25,6 +25,7 @@ def extract_blocks(tree):
         blocks.append((index,key))
     return blocks
 
+# 處理 string， 需要去除一些重複的字串
 def reprocess_string(input_string):
     input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
     input_string = re.sub('<TDCOVTITLE>.*</TDCOVTITLE>', '', input_string)
@@ -34,6 +35,7 @@ def reprocess_string(input_string):
     input_string = re.sub('<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>', '', input_string)
     return input_string
 
+# 對比兩個 element，並將不同之處存入 differences
 def find_differences(elem1, elem2, key, path='.'):
     differences = []
 
@@ -99,6 +101,10 @@ def find_differences(elem1, elem2, key, path='.'):
             differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children1)+idx}]", "Type": "Missing in before", "Description": "Element is missing", "Value": None})
 
     return differences
+
+# ---------------------------------------------------------------------
+# 主程式
+# ---------------------------------------------------------------------
 
 start_time = time.time()
 print("Start time: " + str(start_time))
