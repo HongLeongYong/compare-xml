@@ -8,6 +8,8 @@ import global_variable as gv
 
 # 獲取第一個、第二個和第三個出現的 text 並指定為 key
 def find_first_three_text(element):
+
+
     found_texts = []
 
     def helper(ele):
@@ -31,13 +33,27 @@ def find_first_three_text(element):
         return "_".join(found_texts)
     else:
         return None
+    
+# 尋找是否有 <cd_post_doc> 的 text
+def find_cd_post_doc_text(element):
+    if element.tag == 'CD_POST_DOC' and element.text and element.text.strip():
+        return element.text.strip()
+    for child in element:
+        result = find_cd_post_doc_text(child)
+        if result:
+            return result
+    return None
 
 # 迭代第一層子節點，並將每個子節點的 key 與 index 存入 blocks
 def extract_blocks(tree):
     blocks = []
     for index, child in enumerate(tree):
-        key = find_first_three_text(child)
-        blocks.append((index,key))
+        cd_post_doc_key = find_cd_post_doc_text(child)
+        if cd_post_doc_key:
+            key = cd_post_doc_key
+        else:
+            key = find_first_three_text(child)
+        blocks.append((index, key))
     return blocks
 
 # 處理 string， 需要去除一些重複的字串
