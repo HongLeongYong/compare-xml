@@ -50,6 +50,12 @@ def reprocess_string(input_string):
     input_string = re.sub('<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>', '', input_string)
     return input_string
 
+def is_valid_number(s):
+    return re.match(r'-?\d+(,\d{3})*$', s) is not None
+
+def remove_commas_and_convert(s):
+    return int(re.sub(r'[,]', '', s))
+
 # 對比兩個 element，並將不同之處存入 differences
 def find_differences(elem1, elem2, key, path='.'):
     differences = []
@@ -63,13 +69,13 @@ def find_differences(elem1, elem2, key, path='.'):
     text1 = elem1.text.strip() if elem1.text is not None else ""
     text2 = elem2.text.strip() if elem2.text is not None else ""
 
-    # 把 text1 和 text2 去除 “," 然後相減
-    format_text1 = re.sub(r'[,]', '', text1)
-    format_text2 = re.sub(r'[,]', '', text2)
-    differences_num = 0
-    # 如果是數字就相減
-    if format_text1.isdigit() and format_text2.isdigit():
-        differences_num = int(format_text1) - int(format_text2)
+    if is_valid_number(text1) and is_valid_number(text2):
+        # 去掉逗號並轉為整數
+        format_text1 = remove_commas_and_convert(text1)
+        format_text2 = remove_commas_and_convert(text2)
+
+        # 相減
+        differences_num = format_text1 - format_text2
 
     if text1 != text2:
         differences.append({"Key": key, "Path": path, "Type": "Text Mismatch","Description": differences_num , "Value": f"{text1} != {text2}"})
