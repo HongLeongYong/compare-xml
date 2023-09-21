@@ -1,10 +1,10 @@
 # 對比xml，並顯示不同之處
 import os
-import global_variable as gv
 import re
-import xml.etree.ElementTree as ET
-import pandas as pd 
 import time
+import pandas as pd 
+import xml.etree.ElementTree as ET
+import global_variable as gv
 
 # 獲取第一個出現的 text 並指定為 key
 def find_first_text(element):
