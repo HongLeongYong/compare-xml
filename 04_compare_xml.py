@@ -6,22 +6,37 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import global_variable as gv
 
-# 獲取第一個出現的 text 並指定為 key
-def find_first_text(element):
-    if element.text and element.text.strip():
-        return element.text.strip()
-    
-    for child in element:
-        text = find_first_text(child)
-        if text:
-            return text
-    return None
+# 獲取第一個和第二個出現的 text 並指定為 key
+def find_first_and_second_text(element):
+    found_texts = []
+
+    def helper(ele):
+        nonlocal found_texts
+        if len(found_texts) >= 2:
+            return
+
+        if ele.text and ele.text.strip():
+            found_texts.append(ele.text.strip())
+            if len(found_texts) >= 2:
+                return
+
+        for child in ele:
+            helper(child)
+
+    helper(element)
+
+    if len(found_texts) >= 2:
+        return "_".join(found_texts[:2])
+    elif len(found_texts) == 1:
+        return found_texts[0]
+    else:
+        return None
 
 # 迭代第一層子節點，並將每個子節點的 key 與 index 存入 blocks
 def extract_blocks(tree):
     blocks = []
     for index, child in enumerate(tree):
-        key = find_first_text(child)
+        key = find_first_and_second_text(child)
         blocks.append((index,key))
     return blocks
 
