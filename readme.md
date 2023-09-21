@@ -35,19 +35,19 @@ git clone https://github.com/your_username/your_repository.git
   2. 📦 分割後的 XML 檔案存放位置。
   3. 🎯 比對結果的存放位置。
 
-### 2. 檔名調整 📝 [code](01_change_file_name.py)
+### 2. [檔名調整](01_change_file_name.py)📝
 
 - **使用腳本**: `01_change_file_name.py`
 
   📌 如果您的大型 XML 檔案沒有 `.xml` 擴展名，這個腳本可以幫您自動添加。
 
-### 3. XML 拆分 📤📥 [code](02_split_xml_file.py)
+### 3. [XML 拆分](02_split_xml_file.py) 📤📥
 
 - **使用腳本**: `02_split_xml_file.py`
 
   ✂️ 此腳本會將大型 XML 檔案拆分成多個較小的片段。
 
-### 4. 找出差異 🔍 [code](03_get_different_file.py)
+### 4. [找出差異](03_get_different_file.py) 🔍
 
 - **使用腳本**: `03_get_different_file.py`
 
@@ -55,7 +55,7 @@ git clone https://github.com/your_username/your_repository.git
 
   > **註**: 📤 如果您設置 `move_file_boolean = True`，腳本會將不同的檔案移動到指定的資料夾。
 
-### 5. XML 比對 📊 [code](04_compare_xml.py)
+### 5. [XML 比對](04_compare_xml.py) 📊
 
 - **使用腳本**: `04_compare_xml.py`
 
