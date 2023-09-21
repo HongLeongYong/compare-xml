@@ -26,9 +26,9 @@ git clone https://github.com/your_username/your_repository.git
 
 ## 使用方法 🛠️
 
-### 1. 設定全局變數 🌍
+### 1. [設定全局變數](global_variable.py) 🌍
 
-- **檔案**: `global_variable.py`
+- **使用腳本**: `global_variable.py`
 
   您需要指定以下三個路徑：
   1. 🗂️ 大 XML 檔案的存放位置。
