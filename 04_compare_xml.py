@@ -66,11 +66,31 @@ def reprocess_string(input_string):
     input_string = re.sub('<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>', '', input_string)
     return input_string
 
+
+"""
+    Return whether the string s is a valid number.
+    A valid number is an optional negative sign followed by
+    one or more digits followed by any number of comma-separated
+    groups of three digits.
+
+    >>> is_valid_number('123')
+    True
+    >>> is_valid_number('-1,234')
+    True
+    >>> is_valid_number('1,234,567')
+    True
+    >>> is_valid_number('12,34,567')
+    False
+"""
 def is_valid_number(s):
     return re.match(r'-?\d+(,\d{3})*$', s) is not None
 
+
 def remove_commas_and_convert(s):
-    return int(re.sub(r'[,]', '', s))
+    # Replace all commas
+    s = re.sub(r'[,]', '', s)
+    # Convert into integer
+    return int(s)
 
 # 對比兩個 element，並將不同之處存入 differences
 def find_differences(elem1, elem2, key, path='.'):
