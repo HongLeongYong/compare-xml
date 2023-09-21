@@ -63,8 +63,16 @@ def find_differences(elem1, elem2, key, path='.'):
     text1 = elem1.text.strip() if elem1.text is not None else ""
     text2 = elem2.text.strip() if elem2.text is not None else ""
 
+    # 把 text1 和 text2 去除 “," 然後相減
+    format_text1 = re.sub(r'[,]', '', text1)
+    format_text2 = re.sub(r'[,]', '', text2)
+    differences_num = 0
+    # 如果是數字就相減
+    if format_text1.isdigit() and format_text2.isdigit():
+        differences_num = int(format_text1) - int(format_text2)
+
     if text1 != text2:
-        differences.append({"Key": key, "Path": path, "Type": "Text Mismatch","Description": None, "Value": f"{text1} != {text2}"})
+        differences.append({"Key": key, "Path": path, "Type": "Text Mismatch","Description": differences_num , "Value": f"{text1} != {text2}"})
 
     children1 = list(elem1)
     children2 = list(elem2)
