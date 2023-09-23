@@ -7,17 +7,17 @@ import xml.etree.ElementTree as ET
 import global_variable as gv
 
 # 獲取第一個、第二個和第三個出現的 text 並指定為 key
-def find_first_three_text(element):
+def find_first_n_text(element, n: int):
     found_texts = []
 
     def helper(ele):
         nonlocal found_texts
-        if len(found_texts) >= 3:
+        if len(found_texts) >= n:
             return
 
         if ele.text and ele.text.strip():
             found_texts.append(ele.text.strip())
-            if len(found_texts) >= 3:
+            if len(found_texts) >= n:
                 return
 
         for child in ele:
@@ -25,8 +25,8 @@ def find_first_three_text(element):
 
     helper(element)
 
-    if len(found_texts) >= 3:
-        return "_".join(found_texts[:3])
+    if len(found_texts) >= n:
+        return "_".join(found_texts[:n])
     elif len(found_texts) > 0:
         return "_".join(found_texts)
     else:
@@ -50,7 +50,15 @@ def extract_blocks(tree):
         if cd_post_doc_key:
             key = cd_post_doc_key
         else:
-            key = find_first_three_text(child)
+            key = find_first_n_text(child, 3)
+        blocks.append((index, key))
+    return blocks
+
+# 迭代第一層子節點，並將每個子節點的 key 與 index 存入 blocks
+def extract_blocks_second_compare(tree):
+    blocks = []
+    for index, child in enumerate(tree):
+        key = find_first_n_text(child, 5)
         blocks.append((index, key))
     return blocks
 
@@ -125,10 +133,14 @@ def find_differences(elem1, elem2, key, path='.'):
             before_blocks = extract_blocks(child1)
             after_blocks = extract_blocks(child2)
 
+            before_blocks_second_compare = extract_blocks_second_compare(child1)
+            after_blocks_second_compare = extract_blocks_second_compare(child2)
+
             tag_name = child1[0].tag
 
             if len(before_blocks) > len(after_blocks):
                 after_dict = {key: index for index, key in after_blocks}
+                after_dict_second_compare = {key: index for index, key in after_blocks_second_compare}
                 success_matched_after_indices = []  # 存儲成功對比的after索引
 
                 for before_index, before_key in before_blocks:
