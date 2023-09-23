@@ -4,11 +4,9 @@ import re
 import time
 import pandas as pd 
 import xml.etree.ElementTree as ET
-from functools import lru_cache
 import global_variable as gv
 
 # 獲取第n個出現的 text
-@lru_cache(maxsize=None)
 def find_first_n_text(element, n: int):
     found_texts = []
 
@@ -35,7 +33,6 @@ def find_first_n_text(element, n: int):
         return None
     
 # 尋找是否有 <CD_POST_DOC> 的 text
-@lru_cache(maxsize=None)
 def find_cd_post_doc_text(element):
     if element.tag == 'CD_POST_DOC' and element.text and element.text.strip():
         return element.text.strip()
@@ -47,7 +44,6 @@ def find_cd_post_doc_text(element):
 
 # 迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
 # blocks = {0: ["cd_post_doc", "first 5 text"], ....}
-@lru_cache(maxsize=None)
 def extract_blocks(tree):
     blocks = {}
     for index, child in enumerate(tree):
