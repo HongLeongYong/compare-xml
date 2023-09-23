@@ -149,8 +149,9 @@ def find_differences(elem1, elem2, key, path='.'):
                 missing_after_set = after_set - success_after_set
 
                 for after_index in missing_after_set:
+                    differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Miss match in after", "Description": "Element is missing", "Value": None})
                     for elem in child2[after_index].iter():
-                        differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Missing in before", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
+                        differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
          
                     
             else:
@@ -175,8 +176,9 @@ def find_differences(elem1, elem2, key, path='.'):
                 missing_before_set = before_set - success_before_set
 
                 for before_index in missing_before_set:
+                    differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Miss match in before", "Description": "Element is missing", "Value": None})
                     for elem in child1[before_index].iter():
-                        differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Missing in after", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
+                        differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
         else:
             child_path = f"{path}/{child1.tag}[{idx}]"
             differences.extend(find_differences(child1, child2, key= key, path=child_path))
