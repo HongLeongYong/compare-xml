@@ -42,24 +42,18 @@ def find_cd_post_doc_text(element):
             return result
     return None
 
-# 迭代第一層子節點，並將每個子節點的 key 與 index 存入 blocks
+# 迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
 def extract_blocks(tree):
-    blocks = []
+    blocks = {}
     for index, child in enumerate(tree):
         cd_post_doc_key = find_cd_post_doc_text(child)
         if cd_post_doc_key:
             key = cd_post_doc_key
         else:
             key = find_first_n_text(child, 3)
-        blocks.append((index, key))
-    return blocks
-
-# 迭代第一層子節點，並將每個子節點的 key 與 index 存入 blocks
-def extract_blocks_second_compare(tree):
-    blocks = []
-    for index, child in enumerate(tree):
-        key = find_first_n_text(child, 5)
-        blocks.append((index, key))
+        
+        second_key = find_first_n_text(child, 5)
+        blocks[index] = [key, second_key]
     return blocks
 
 # 處理 string， 需要去除一些重複的字串
@@ -133,18 +127,13 @@ def find_differences(elem1, elem2, key, path='.'):
             before_blocks = extract_blocks(child1)
             after_blocks = extract_blocks(child2)
 
-            before_blocks_second_compare = extract_blocks_second_compare(child1)
-            after_blocks_second_compare = extract_blocks_second_compare(child2)
-
             tag_name = child1[0].tag
 
             if len(before_blocks) > len(after_blocks):
-                after_dict = {key: index for index, key in after_blocks}
-                after_dict_second_compare = {key: index for index, key in after_blocks_second_compare}
                 success_matched_after_indices = []  # 存儲成功對比的after索引
 
-                for before_index, before_key in before_blocks:
-                    after_index = after_dict.get(before_key)
+                for before_index, before_key in before_blocks:                    
+                    after_index = after_blocks.get(before_key[0])
                     if after_index is not None:
                         child_path = f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
                         differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
@@ -167,11 +156,10 @@ def find_differences(elem1, elem2, key, path='.'):
          
                     
             else:
-                before_dict = {key: index for index, key in before_blocks}
                 success_matched_before_indices = []  # 存儲成功對比的before索引
 
                 for after_index, after_key in after_blocks:
-                    before_index = before_dict.get(after_key)
+                    before_index = before_blocks.get(after_key[0])
                     if before_index is not None:
                         child_path = f"{path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
                         differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
