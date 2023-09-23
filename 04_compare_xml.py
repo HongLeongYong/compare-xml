@@ -4,9 +4,11 @@ import re
 import time
 import pandas as pd 
 import xml.etree.ElementTree as ET
+from functools import lru_cache
 import global_variable as gv
 
 # 獲取第n個出現的 text
+@lru_cache(maxsize=None)
 def find_first_n_text(element, n: int):
     found_texts = []
 
@@ -33,6 +35,7 @@ def find_first_n_text(element, n: int):
         return None
     
 # 尋找是否有 <CD_POST_DOC> 的 text
+@lru_cache(maxsize=None)
 def find_cd_post_doc_text(element):
     if element.tag == 'CD_POST_DOC' and element.text and element.text.strip():
         return element.text.strip()
@@ -44,6 +47,7 @@ def find_cd_post_doc_text(element):
 
 # 迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
 # blocks = {0: ["cd_post_doc", "first 5 text"], ....}
+@lru_cache(maxsize=None)
 def extract_blocks(tree):
     blocks = {}
     for index, child in enumerate(tree):
@@ -241,46 +245,43 @@ def find_differences(elem1, elem2, key, path='.'):
 
     return differences
 
-# ---------------------------------------------------------------------
-# 主程式
-# ---------------------------------------------------------------------
 
-start_time = time.time()
-print("Start time: " + str(start_time))
+def read_and_reprocess_file(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        file_string = f.read()
+    return reprocess_string(file_string)
 
-output_df = pd.DataFrame()
+def main():
+    start_time = time.time()
+    print("Start time: " + str(start_time))
 
-for index, file in enumerate(os.listdir(gv.before_file_directory)):
-    before_file = open(os.path.join(gv.before_file_directory, file), "r", encoding="utf-8")
-    before_file_string = before_file.read()
-    before_file.close()
-    before_file_string = reprocess_string(before_file_string)
+    output_df = pd.DataFrame()
 
-    after_file = open(os.path.join(gv.after_file_directory, file), "r", encoding="utf-8")
-    after_file_string = after_file.read()
-    after_file.close()
-    after_file_string = reprocess_string(after_file_string)
+    for index, file in enumerate(os.listdir(gv.before_file_directory)):
+        before_file_path = os.path.join(gv.before_file_directory, file)
+        after_file_path = os.path.join(gv.after_file_directory, file)
 
-    if before_file_string != after_file_string:
-        before_tree = ET.ElementTree(ET.fromstring(before_file_string))
-        before_root = before_tree.getroot()
+        before_file_string = read_and_reprocess_file(before_file_path)
+        after_file_string = read_and_reprocess_file(after_file_path)
 
-        after_tree = ET.ElementTree(ET.fromstring(after_file_string))
-        after_root = after_tree.getroot()
+        if before_file_string != after_file_string:
+            before_root = ET.fromstring(before_file_string)
+            after_root = ET.fromstring(after_file_string)
 
-        differences = find_differences(before_root, after_root, key = file)
-        output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
+            differences = find_differences(before_root, after_root, key = file)
+            output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
 
-    if index % 500 == 0:
-        print(f"Processing {index + 1} files")
+        if index % 500 == 0:
+            print(f"Processing {index + 1} files")
 
-    ## break point
-    # if index == 1000:
-    #     break
-print(f"Total Processing {index + 1} files")
+    print(f"Total Processing {index + 1} files")
 
-output_df.to_excel(os.path.join(gv.result_directory, "output.xlsx"), index=True)
+    output_file_path = os.path.join(gv.result_directory, "output.xlsx")
+    output_df.to_excel(output_file_path, index=True)
 
-end_time = time.time()
-print("End time: " + str(end_time))
-print("Total time: " + str(end_time - start_time))
+    end_time = time.time()
+    print("End time: " + str(end_time))
+    print("Total time: " + str(end_time - start_time))
+
+if __name__ == "__main__":
+    main()
