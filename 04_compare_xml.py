@@ -93,12 +93,9 @@ def is_valid_number(s):
     # 匹配包含逗號的數字格式
     return re.match(r'^-?\d{1,3}(,\d{3})+$', s) is not None
 
-# 去除逗號
+# 去除逗號, 變成 int
 def remove_commas_and_convert(s):
-    # Replace all commas
-    s = re.sub(r'[,]', '', s)
-    # Convert into integer
-    return int(s)
+    return int(s.replace(',',''))
 
 # 對比兩個 element，並將不同之處存入 differences
 def find_differences(elem1, elem2, key, path='.'):
