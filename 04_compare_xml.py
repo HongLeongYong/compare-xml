@@ -6,7 +6,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import global_variable as gv
 
-# 獲取第一個、第二個和第三個出現的 text 並指定為 key
+# 獲取第n個出現的 text
 def find_first_n_text(element, n: int):
     found_texts = []
 
@@ -43,6 +43,7 @@ def find_cd_post_doc_text(element):
     return None
 
 # 迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
+# blocks = {0: ["cd_post_doc", "first 5 text"], ....}
 def extract_blocks(tree):
     blocks = {}
     for index, child in enumerate(tree):
@@ -56,7 +57,7 @@ def extract_blocks(tree):
         blocks[index] = [key, second_key]
     return blocks
 
-# 處理 string， 需要去除一些重複的字串
+# 去除無需比對內容
 def reprocess_string(input_string):
     input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
     input_string = re.sub('<TDCOVTITLE>.*</TDCOVTITLE>', '', input_string)
@@ -84,6 +85,7 @@ def reprocess_string(input_string):
     >>> is_valid_number('1234567')
     False
 """
+# 判斷是否為數字
 def is_valid_number(s):
     # 匹配只有數字（不包含逗號）的情況
     if re.match(r'^-?\d{1,3}$', s):
@@ -91,7 +93,7 @@ def is_valid_number(s):
     # 匹配包含逗號的數字格式
     return re.match(r'^-?\d{1,3}(,\d{3})+$', s) is not None
 
-
+# 去除逗號
 def remove_commas_and_convert(s):
     # Replace all commas
     s = re.sub(r'[,]', '', s)
@@ -225,7 +227,8 @@ def find_differences(elem1, elem2, key, path='.'):
                     differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Miss match in before", "Description": "Element is missing", "Value": None})
                     for elem in child1[before_index].iter():
                         differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
-        else:
+
+        else:  # len(child1) == len(child2):
             child_path = f"{path}/{child1.tag}[{idx}]"
             differences.extend(find_differences(child1, child2, key= key, path=child_path))
 
@@ -274,7 +277,7 @@ for index, file in enumerate(os.listdir(gv.before_file_directory)):
     ## break point
     # if index == 1000:
     #     break
-print(f"Processing {index + 1} files")
+print(f"Total Processing {index + 1} files")
 
 output_df.to_excel(os.path.join(gv.result_directory, "output.xlsx"), index=True)
 
