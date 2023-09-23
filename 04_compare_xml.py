@@ -132,7 +132,7 @@ def find_differences(elem1, elem2, key, path='.'):
             if len(before_blocks) > len(after_blocks):
                 success_matched_after_indices = []  # 存儲成功對比的after索引
 
-                for before_index, before_key in before_blocks:                    
+                for before_index, before_key in before_blocks.items:                    
                     after_index = after_blocks.get(before_key[0])
                     if after_index is not None:
                         child_path = f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
@@ -158,7 +158,7 @@ def find_differences(elem1, elem2, key, path='.'):
             else:
                 success_matched_before_indices = []  # 存儲成功對比的before索引
 
-                for after_index, after_key in after_blocks:
+                for after_index, after_key in after_blocks.items:
                     before_index = before_blocks.get(after_key[0])
                     if before_index is not None:
                         child_path = f"{path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
