@@ -129,30 +129,54 @@ def find_differences(elem1, elem2, key, path='.'):
 
             if len(before_blocks) > len(after_blocks):
                 after_dict = {key: index for index, key in after_blocks}
+                success_matched_after_indices = []  # 存儲成功對比的after索引
 
                 for before_index, before_key in before_blocks:
                     after_index = after_dict.get(before_key)
                     if after_index is not None:
                         child_path = f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
                         differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
+                        success_matched_after_indices.append(after_index) #成功匹配的after索引
                     else:
+                        # 如果抓取不了，就要使用前4個 text 當成 key, 然後再次進行比對
                         differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Missing in after", "Description": "Element is missing", "Value": None})
                         for elem in child1[before_index].iter():
                             differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
 
+                # 沒有比對成功 after
+                success_after_set = set(success_matched_after_indices)
+                after_set = set(range(len(after_blocks)))
+                missing_after_set = after_set - success_after_set
+
+                for after_index in missing_after_set:
+                    for elem in child2[after_index].iter():
+                        differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Missing in before", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
+         
+                    
             else:
                 before_dict = {key: index for index, key in before_blocks}
+                success_matched_before_indices = []  # 存儲成功對比的before索引
 
                 for after_index, after_key in after_blocks:
                     before_index = before_dict.get(after_key)
                     if before_index is not None:
                         child_path = f"{path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
                         differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
+                        success_matched_before_indices.append(before_index) #成功匹配的before索引
                     else:
+                        # 如果抓取不了，就要使用前4個 text 當成 key, 然後再次進行比對
                         differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Missing in before", "Description": "Element is missing", "Value": None})
                         for elem in child2[after_index].iter():
                             differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
-            
+
+                # 沒有比對成功 before
+                success_before_set = set(success_matched_before_indices)
+                before_set = set(range(len(before_blocks)))
+                missing_before_set = before_set - success_before_set
+
+                for before_index in missing_before_set:
+                    for elem in child1[before_index].iter():
+                        differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Missing in after", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
         else:
             child_path = f"{path}/{child1.tag}[{idx}]"
             differences.extend(find_differences(child1, child2, key= key, path=child_path))
