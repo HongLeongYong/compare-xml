@@ -81,9 +81,15 @@ def reprocess_string(input_string):
     True
     >>> is_valid_number('12,34,567')
     False
+    >>> is_valid_number('1234567')
+    False
 """
 def is_valid_number(s):
-    return re.match(r'-?\d+(,\d{3})*$', s) is not None
+    # 匹配只有數字（不包含逗號）的情況
+    if re.match(r'^-?\d{1,3}$', s):
+        return True
+    # 匹配包含逗號的數字格式
+    return re.match(r'^-?\d{1,3}(,\d{3})+$', s) is not None
 
 
 def remove_commas_and_convert(s):
