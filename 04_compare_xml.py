@@ -151,6 +151,8 @@ def find_differences(elem1, elem2, key, path='.'):
                             differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                             success_matched_after_indices.append(after_index) 
                             success_compare = True
+                            # 去除 after index 重複比對 
+                            break
                     
                     # 第二次: 使用 second key 比較
                     if success_compare == False :
@@ -162,6 +164,7 @@ def find_differences(elem1, elem2, key, path='.'):
                                 differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                                 success_matched_after_indices.append(after_index) #成功匹配的after索引
                                 success_compare = True
+                                break
 
                     # 都比對不了，append before 內容
                     if success_compare == False:
@@ -197,6 +200,7 @@ def find_differences(elem1, elem2, key, path='.'):
                             differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                             success_matched_before_indices.append(before_index) #成功匹配的before索引
                             success_compare = True
+                            break
 
                     # 第二次: 使用 second key 比較
                     if success_compare == False:
@@ -208,6 +212,7 @@ def find_differences(elem1, elem2, key, path='.'):
                                 differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                                 success_matched_before_indices.append(before_index) #成功匹配的before索引
                                 success_compare = True
+                                break
 
                     # 都比對不了，append after 內容
                     if success_compare == False:
