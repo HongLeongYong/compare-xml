@@ -7,14 +7,20 @@ import pandas as pd
 from lxml import etree as ET
 import global_variable as gv
 
+# 預先編譯正則表達式
+patterns = [re.compile(p) for p in [
+    '<TDSUFFIX2>.*</TDSUFFIX2>',
+    '<TDCOVTITLE>.*</TDCOVTITLE>',
+    '<TDDEST>.*</TDDEST>',
+    '<TIMESTAMP>.*</TIMESTAMP>',
+    '<CORR_KEY>.*?</CORR_KEY>',
+    '<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>'
+]]
+
 # 去除無需比對內容
 def reprocess_string(input_string):
-    input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
-    input_string = re.sub('<TDCOVTITLE>.*</TDCOVTITLE>', '', input_string)
-    input_string = re.sub('<TDDEST>.*</TDDEST>', '', input_string)
-    input_string = re.sub('<TIMESTAMP>.*</TIMESTAMP>', '', input_string)
-    input_string = re.sub('<CORR_KEY>.*?</CORR_KEY>', '', input_string)
-    input_string = re.sub('<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>', '', input_string)
+    for pattern in patterns:
+        input_string = pattern.sub('', input_string)
     return input_string
 
 # 獲取第n個出現的 text
