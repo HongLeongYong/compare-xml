@@ -24,6 +24,13 @@
 git clone https://github.com/your_username/your_repository.git
 ```
 
+需安裝 package
+1. lxml 
+
+```bash
+ pip install lxml
+```
+
 ## 使用方法 🛠️
 
 ### 1. [設定全局變數](global_variable.py) 🌍
@@ -46,7 +53,7 @@ git clone https://github.com/your_username/your_repository.git
 - **使用腳本**: `02_split_xml_file.py`
 
   先跑一次 before , 手動調整參數後再跑一次 after
-  
+
   ✂️ 此腳本會將大型 XML 檔案拆分成多個較小的片段。
 
 ### 4. [找出差異](03_get_different_file.py) 🔍
