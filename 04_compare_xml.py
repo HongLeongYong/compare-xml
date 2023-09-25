@@ -6,7 +6,8 @@ import pandas as pd
 # import xml.etree.ElementTree as ET
 from lxml import etree as ET
 import global_variable as gv
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor # io
+from concurrent.futures import ProcessPoolExecutor # cpu 操作
 
 # 預先編譯正則表達式
 patterns = [re.compile(p) for p in [
@@ -281,7 +282,7 @@ def main():
 
     all_differences = []
 
-    with ThreadPoolExecutor() as executor:
+    with ProcessPoolExecutor() as executor:
         for index, file in enumerate(os.listdir(gv.before_file_directory)):
             future = executor.submit(process_file, file)
             result = future.result()
@@ -290,6 +291,18 @@ def main():
 
             if index % 1000 == 0:
                 print(f"Processing {index + 1} files")
+
+    # with ThreadPoolExecutor() as executor:
+    #     for index, file in enumerate(os.listdir(gv.before_file_directory)):
+    #         future = executor.submit(process_file, file)
+    #         result = future.result()
+    #         if result:
+    #             all_differences.extend(result)
+
+    #         if index % 1000 == 0:
+    #             print(f"Processing {index + 1} files")
+
+
 
     # for index, file in enumerate(os.listdir(gv.before_file_directory)):
     #     before_file_path = os.path.join(gv.before_file_directory, file)
