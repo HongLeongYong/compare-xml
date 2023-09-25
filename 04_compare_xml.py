@@ -264,6 +264,7 @@ def main():
     print("Start time: " + str(start_time))
 
     output_df = pd.DataFrame()
+    all_differences = []
 
     for index, file in enumerate(os.listdir(gv.before_file_directory)):
         before_file_path = os.path.join(gv.before_file_directory, file)
@@ -277,13 +278,15 @@ def main():
             after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
             differences = find_differences(before_root, after_root, key = file)
-            output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
+            all_differences.extend(differences)
+            # output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
 
         if index % 1000 == 0:
             print(f"Processing {index + 1} files")
 
     print(f"Total Processing {index + 1} files")
 
+    output_df = pd.DataFrame(all_differences)
     output_file_path = os.path.join(gv.result_directory, "output.xlsx")
     output_df.to_excel(output_file_path, index=True)
 
