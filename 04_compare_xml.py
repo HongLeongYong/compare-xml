@@ -6,6 +6,7 @@ import pandas as pd
 # import xml.etree.ElementTree as ET
 from lxml import etree as ET
 import global_variable as gv
+from concurrent.futures import ThreadPoolExecutor
 
 # 預先編譯正則表達式
 patterns = [re.compile(p) for p in [
@@ -259,29 +260,54 @@ def read_and_reprocess_file(file_path):
         file_string = f.read()
     return reprocess_string(file_string)
 
+def process_file(file):
+    before_file_path = os.path.join(gv.before_file_directory, file)
+    after_file_path = os.path.join(gv.after_file_directory, file)
+
+    before_file_string = read_and_reprocess_file(before_file_path)
+    after_file_string = read_and_reprocess_file(after_file_path)
+
+    if before_file_string != after_file_string:
+        before_root = ET.fromstring(before_file_string.encode('utf-8'))
+        after_root = ET.fromstring(after_file_string.encode('utf-8'))
+
+        differences = find_differences(before_root, after_root, key=file)
+        return differences
+    return []
+
 def main():
     start_time = time.time()
     print("Start time: " + str(start_time))
 
     all_differences = []
 
-    for index, file in enumerate(os.listdir(gv.before_file_directory)):
-        before_file_path = os.path.join(gv.before_file_directory, file)
-        after_file_path = os.path.join(gv.after_file_directory, file)
+    with ThreadPoolExecutor() as executor:
+        for index, file in enumerate(os.listdir(gv.before_file_directory)):
+            future = executor.submit(process_file, file)
+            result = future.result()
+            if result:
+                all_differences.extend(result)
 
-        before_file_string = read_and_reprocess_file(before_file_path)
-        after_file_string = read_and_reprocess_file(after_file_path)
+            if index % 1000 == 0:
+                print(f"Processing {index + 1} files")
 
-        if before_file_string != after_file_string:
-            before_root = ET.fromstring(before_file_string.encode('utf-8'))
-            after_root = ET.fromstring(after_file_string.encode('utf-8'))
+    # for index, file in enumerate(os.listdir(gv.before_file_directory)):
+    #     before_file_path = os.path.join(gv.before_file_directory, file)
+    #     after_file_path = os.path.join(gv.after_file_directory, file)
 
-            differences = find_differences(before_root, after_root, key = file)
-            for d in differences:
-                all_differences.append(d)
+    #     before_file_string = read_and_reprocess_file(before_file_path)
+    #     after_file_string = read_and_reprocess_file(after_file_path)
 
-        if index % 1000 == 0:
-            print(f"Processing {index + 1} files")
+    #     if before_file_string != after_file_string:
+    #         before_root = ET.fromstring(before_file_string.encode('utf-8'))
+    #         after_root = ET.fromstring(after_file_string.encode('utf-8'))
+
+    #         differences = find_differences(before_root, after_root, key = file)
+    #         for d in differences:
+    #             all_differences.append(d)
+
+    #     if index % 1000 == 0:
+    #         print(f"Processing {index + 1} files")
 
     print(f"Total Processing {index + 1} files")
 
