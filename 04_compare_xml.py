@@ -258,6 +258,7 @@ def find_differences(elem1, elem2, key, path='.'):
 
     return differences
 
+# find_differences 函數迭代形式
 def find_differences_iterative(elem1, elem2, key, path='.'):
     stack = [(elem1, elem2, key, path)]
     differences = []
@@ -286,13 +287,11 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
         if text1 != text2:
             differences.append({"Key": cur_key, "Path": cur_path, "Type": "Text Mismatch","Description": differences_num , "Value": f"{text1} != {text2}"})
 
-
         # 將子節點添加到堆疊中
         children1 = list(cur_elem1)
         children2 = list(cur_elem2)
 
         for idx, (child1, child2) in enumerate(zip(children1, children2)):
-            ##############################################
             if len(child1) != len(child2):
 
                 before_blocks = extract_blocks(child1)
@@ -314,7 +313,6 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
 
                             if before_first_key == after_first_key:
                                 child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
-                                # differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                                 stack.append((child1[before_index], child2[after_index], cur_key, child_path))
                                 success_matched_after_indices.append(after_index) 
                                 success_compare = True
@@ -328,7 +326,6 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
 
                                 if before_second_key == after_second_key:
                                     child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
-                                    # differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                                     stack.append((child1[before_index], child2[after_index], cur_key, child_path))
                                     success_matched_after_indices.append(after_index) #成功匹配的after索引
                                     success_compare = True
@@ -366,7 +363,6 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
                             
                             if after_first_key == before_first_key:
                                 child_path = f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
-                                # differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                                 stack.append((child1[before_index], child2[after_index], cur_key, child_path))
                                 success_matched_before_indices.append(before_index) #成功匹配的before索引
                                 success_compare = True
@@ -380,7 +376,6 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
 
                                 if after_second_key == before_second_key:
                                     child_path = f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
-                                    # differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
                                     stack.append((child1[before_index], child2[after_index], cur_key, child_path))
                                     success_matched_before_indices.append(before_index) #成功匹配的before索引
                                     success_compare = True
@@ -406,16 +401,6 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
             else:  # len(child1) == len(child2):
                 child_path = f"{cur_path}/{child1.tag}[{idx}]"
                 stack.append((child1, child2, cur_key, child_path))
-                # differences.extend(find_differences(child1, child2, key= key, path=child_path))
-
-
-            ##############################################
-
-            # new_path = f"{cur_path}/{child1.tag}[{idx}]"
-            # stack.append((child1, child2, cur_key, new_path))
-
-        # 處理 children1 和 children2 長度不相等的情況
-        # ...（這部分的邏輯也可以直接從您原來的函數中複製過來）
 
         if len(children1) > len(children2):
             for idx, child in enumerate(children1[len(children2):]):
