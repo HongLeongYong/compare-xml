@@ -278,7 +278,8 @@ def main():
             after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
             differences = find_differences(before_root, after_root, key = file)
-            all_differences.extend(differences)
+            flattened_differences = [value for d in differences for value in d.values()]
+            all_differences.extend(flattened_differences)
             # output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
 
         if index % 1000 == 0:
