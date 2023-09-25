@@ -3,7 +3,8 @@ import os
 import re
 import time
 import pandas as pd 
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
+from lxml import etree as ET
 import global_variable as gv
 
 # 去除無需比對內容
@@ -266,8 +267,8 @@ def main():
         after_file_string = read_and_reprocess_file(after_file_path)
 
         if before_file_string != after_file_string:
-            before_root = ET.fromstring(before_file_string)
-            after_root = ET.fromstring(after_file_string)
+            before_root = ET.fromstring(before_file_string.encode('utf-8'))
+            after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
             differences = find_differences(before_root, after_root, key = file)
             output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
