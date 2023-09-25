@@ -404,7 +404,7 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
                             differences.append({"Key": cur_key, "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
 
             else:  # len(child1) == len(child2):
-                child_path = f"{path}/{child1.tag}[{idx}]"
+                child_path = f"{cur_path}/{child1.tag}[{idx}]"
                 stack.append((child1, child2, cur_key, child_path))
                 # differences.extend(find_differences(child1, child2, key= key, path=child_path))
 
