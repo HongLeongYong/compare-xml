@@ -335,18 +335,20 @@ def main():
     print("End time: " + str(end_time))
     print("Total time: " + str(end_time - start_time))
 
+
 def convert_profile_to_csv(pstats_file, csv_file):
     stats = pstats.Stats(pstats_file)
     stats.sort_stats('cumulative')
     
     with open(csv_file, 'w', newline='') as csvfile:
-        fieldnames = ['filename', 'line', 'func_name', 'ccalls', 'ncalls', 'ttot', 'tavg']
+        fieldnames = ['filename', 'line', 'func_name', 'ccalls', 'ncalls', 'ttot', 'cum_calls']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
         writer.writeheader()
         
-        for func, (ccalls, ncalls, ttot, tavg) in stats.stats.items():
+        for func, stat in stats.stats.items():
             filename, line, func_name = func
+            ccalls, ncalls, ttot, cum_calls, callers = stat
             writer.writerow({
                 'filename': filename,
                 'line': line,
@@ -354,11 +356,10 @@ def convert_profile_to_csv(pstats_file, csv_file):
                 'ccalls': ccalls,
                 'ncalls': ncalls,
                 'ttot': ttot,
-                'tavg': tavg
+                'cum_calls': cum_calls
             })
 
 if __name__ == "__main__":
-    # main()
     profile_file = 'profile_result.pstats'
     csv_file = 'profile_result.csv'
     
