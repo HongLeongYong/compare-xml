@@ -8,6 +8,9 @@ from lxml import etree as ET
 import global_variable as gv
 from concurrent.futures import ThreadPoolExecutor # io
 from concurrent.futures import ProcessPoolExecutor # cpu 操作
+import cProfile
+import pstats
+import csv
 
 # 預先編譯正則表達式
 patterns = [re.compile(p) for p in [
@@ -282,17 +285,7 @@ def main():
 
     all_differences = []
 
-    with ProcessPoolExecutor() as executor:
-        for index, file in enumerate(os.listdir(gv.before_file_directory)):
-            future = executor.submit(process_file, file)
-            result = future.result()
-            if result:
-                all_differences.extend(result)
-
-            if index % 1000 == 0:
-                print(f"Processing {index + 1} files")
-
-    # with ThreadPoolExecutor() as executor:
+    # with ProcessPoolExecutor() as executor:
     #     for index, file in enumerate(os.listdir(gv.before_file_directory)):
     #         future = executor.submit(process_file, file)
     #         result = future.result()
@@ -302,7 +295,15 @@ def main():
     #         if index % 1000 == 0:
     #             print(f"Processing {index + 1} files")
 
+    with ThreadPoolExecutor() as executor:
+        for index, file in enumerate(os.listdir(gv.before_file_directory)):
+            future = executor.submit(process_file, file)
+            result = future.result()
+            if result:
+                all_differences.extend(result)
 
+            if index % 1000 == 0:
+                print(f"Processing {index + 1} files")
 
     # for index, file in enumerate(os.listdir(gv.before_file_directory)):
     #     before_file_path = os.path.join(gv.before_file_directory, file)
@@ -332,5 +333,35 @@ def main():
     print("End time: " + str(end_time))
     print("Total time: " + str(end_time - start_time))
 
+def convert_profile_to_csv(pstats_file, csv_file):
+    stats = pstats.Stats(pstats_file)
+    stats.sort_stats('cumulative')
+    
+    with open(csv_file, 'w', newline='') as csvfile:
+        fieldnames = ['filename', 'line', 'func_name', 'ccalls', 'ncalls', 'ttot', 'tavg']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        writer.writeheader()
+        
+        for func, (ccalls, ncalls, ttot, tavg) in stats.stats.items():
+            filename, line, func_name = func
+            writer.writerow({
+                'filename': filename,
+                'line': line,
+                'func_name': func_name,
+                'ccalls': ccalls,
+                'ncalls': ncalls,
+                'ttot': ttot,
+                'tavg': tavg
+            })
+
 if __name__ == "__main__":
-    main()
+    # main()
+    profile_file = 'profile_result.pstats'
+    csv_file = 'profile_result.csv'
+    
+    # 生成profile結果
+    cProfile.run('main()', filename=profile_file)
+    
+    # 轉換為CSV文件
+    convert_profile_to_csv(profile_file, csv_file)
