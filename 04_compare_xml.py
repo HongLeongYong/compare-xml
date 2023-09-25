@@ -279,7 +279,7 @@ def main():
             differences = find_differences(before_root, after_root, key = file)
             output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
 
-        if index % 500 == 0:
+        if index % 1000 == 0:
             print(f"Processing {index + 1} files")
 
     print(f"Total Processing {index + 1} files")
