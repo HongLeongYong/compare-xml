@@ -516,7 +516,8 @@ def convert_profile_to_csv(pstats_file, csv_file):
             })
 
 if __name__ == "__main__":
-    output_cprofile_flag = True
+    # 是否產出報告
+    output_cprofile_flag = False
 
     if output_cprofile_flag:
         profile_file = 'profile_result.pstats'
