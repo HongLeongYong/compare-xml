@@ -6,6 +6,16 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import global_variable as gv
 
+# 去除無需比對內容
+def reprocess_string(input_string):
+    input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
+    input_string = re.sub('<TDCOVTITLE>.*</TDCOVTITLE>', '', input_string)
+    input_string = re.sub('<TDDEST>.*</TDDEST>', '', input_string)
+    input_string = re.sub('<TIMESTAMP>.*</TIMESTAMP>', '', input_string)
+    input_string = re.sub('<CORR_KEY>.*?</CORR_KEY>', '', input_string)
+    input_string = re.sub('<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>', '', input_string)
+    return input_string
+
 # 獲取第n個出現的 text
 def find_first_n_text(element, n: int):
     found_texts = []
@@ -56,16 +66,6 @@ def extract_blocks(tree):
         second_key = find_first_n_text(child, 5)
         blocks[index] = [key, second_key]
     return blocks
-
-# 去除無需比對內容
-def reprocess_string(input_string):
-    input_string = re.sub('<TDSUFFIX2>.*</TDSUFFIX2>', '', input_string)
-    input_string = re.sub('<TDCOVTITLE>.*</TDCOVTITLE>', '', input_string)
-    input_string = re.sub('<TDDEST>.*</TDDEST>', '', input_string)
-    input_string = re.sub('<TIMESTAMP>.*</TIMESTAMP>', '', input_string)
-    input_string = re.sub('<CORR_KEY>.*?</CORR_KEY>', '', input_string)
-    input_string = re.sub('<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>', '', input_string)
-    return input_string
 
 
 """
