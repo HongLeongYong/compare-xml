@@ -263,7 +263,6 @@ def main():
     start_time = time.time()
     print("Start time: " + str(start_time))
 
-    output_df = pd.DataFrame()
     all_differences = []
 
     for index, file in enumerate(os.listdir(gv.before_file_directory)):
@@ -278,9 +277,8 @@ def main():
             after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
             differences = find_differences(before_root, after_root, key = file)
-            flattened_differences = [value for d in differences for value in d.values()]
-            all_differences.extend(flattened_differences)
-            # output_df = pd.concat([output_df, pd.DataFrame(differences)], axis=0).reset_index(drop=True)
+            for d in differences:
+                all_differences.append(d)
 
         if index % 1000 == 0:
             print(f"Processing {index + 1} files")
