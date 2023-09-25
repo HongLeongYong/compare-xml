@@ -14,7 +14,7 @@ import csv
 
 # 預先編譯正則表達式
 patterns = [re.compile(p) for p in [
-    # '<TDSUFFIX2>.*</TDSUFFIX2>',
+    '<TDSUFFIX2>.*</TDSUFFIX2>',
     '<TDCOVTITLE>.*</TDCOVTITLE>',
     '<TDDEST>.*</TDDEST>',
     '<TIMESTAMP>.*</TIMESTAMP>',
@@ -429,7 +429,7 @@ def process_file(file):
         before_root = ET.fromstring(before_file_string.encode('utf-8'))
         after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
-        differences = find_differences(before_root, after_root, key=file)
+        differences = find_differences_iterative(before_root, after_root, key=file)
         return differences
     return []
 
@@ -439,6 +439,7 @@ def main():
 
     all_differences = []
 
+    '''CPU操作'''
     # with ProcessPoolExecutor() as executor:
     #     for index, file in enumerate(os.listdir(gv.before_file_directory)):
     #         future = executor.submit(process_file, file)
@@ -449,35 +450,36 @@ def main():
     #         if index % 1000 == 0:
     #             print(f"Processing {index + 1} files")
 
-    # with ThreadPoolExecutor() as executor:
-    #     for index, file in enumerate(os.listdir(gv.before_file_directory)):
-    #         future = executor.submit(process_file, file)
-    #         result = future.result()
-    #         if result:
-    #             all_differences.extend(result)
+    '''IO操作'''
+    with ThreadPoolExecutor() as executor:
+        for index, file in enumerate(os.listdir(gv.before_file_directory)):
+            future = executor.submit(process_file, file)
+            result = future.result()
+            if result:
+                all_differences.extend(result)
 
-    #         if index % 1000 == 0:
-    #             print(f"Processing {index + 1} files")
+            if index % 1000 == 0:
+                print(f"Processing {index + 1} files")
 
-    for index, file in enumerate(os.listdir(gv.before_file_directory)):
-        before_file_path = os.path.join(gv.before_file_directory, file)
-        after_file_path = os.path.join(gv.after_file_directory, file)
+    '''正常執行'''
+    # for index, file in enumerate(os.listdir(gv.before_file_directory)):
+    #     before_file_path = os.path.join(gv.before_file_directory, file)
+    #     after_file_path = os.path.join(gv.after_file_directory, file)
 
-        before_file_string = read_and_reprocess_file(before_file_path)
-        after_file_string = read_and_reprocess_file(after_file_path)
+    #     before_file_string = read_and_reprocess_file(before_file_path)
+    #     after_file_string = read_and_reprocess_file(after_file_path)
 
-        if before_file_string != after_file_string:
-            before_root = ET.fromstring(before_file_string.encode('utf-8'))
-            after_root = ET.fromstring(after_file_string.encode('utf-8'))
+    #     if before_file_string != after_file_string:
+    #         before_root = ET.fromstring(before_file_string.encode('utf-8'))
+    #         after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
-            differences = find_differences_iterative(before_root, after_root, key = file)
-            for d in differences:
-                all_differences.append(d)
+    #         differences = find_differences_iterative(before_root, after_root, key = file)
+    #         for d in differences:
+    #             all_differences.append(d)
 
-        if index % 1000 == 0:
-            print(f"Processing {index + 1} files")
+    #     if index % 1000 == 0:
+    #         print(f"Processing {index + 1} files")
 
-        if index == 500 : break
 
     print(f"Total Processing {index + 1} files")
 
@@ -514,11 +516,16 @@ def convert_profile_to_csv(pstats_file, csv_file):
             })
 
 if __name__ == "__main__":
-    profile_file = 'profile_result.pstats'
-    csv_file = 'profile_result.csv'
-    
-    # 生成profile結果
-    cProfile.run('main()', filename=profile_file)
-    
-    # 轉換為CSV文件
-    convert_profile_to_csv(profile_file, csv_file)
+    output_cprofile_flag = True
+
+    if output_cprofile_flag:
+        profile_file = 'profile_result.pstats'
+        csv_file = 'profile_result.csv'
+        
+        # 生成profile結果
+        cProfile.run('main()', filename=profile_file)
+        
+        # 轉換為CSV文件
+        convert_profile_to_csv(profile_file, csv_file)
+    else:
+        main()
