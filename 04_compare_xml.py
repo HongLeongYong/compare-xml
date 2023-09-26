@@ -275,16 +275,16 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
         text1 = cur_elem1.text.strip() if cur_elem1.text is not None else ""
         text2 = cur_elem2.text.strip() if cur_elem2.text is not None else ""
 
-        differences_num = 0
-        if is_valid_number(text1) and is_valid_number(text2):
-            # 去掉逗號並轉為整數
-            format_text1 = remove_commas_and_convert(text1)
-            format_text2 = remove_commas_and_convert(text2)
-
-            # 相減
-            differences_num = format_text1 - format_text2
-
         if text1 != text2:
+
+            differences_num = 0
+            if is_valid_number(text1) and is_valid_number(text2):
+                # 去掉逗號並轉為整數
+                format_text1 = remove_commas_and_convert(text1)
+                format_text2 = remove_commas_and_convert(text2)
+
+                differences_num = format_text1 - format_text2
+
             differences.append({"Key": cur_key, "Path": cur_path, "Type": "Text Mismatch","Description": differences_num , "Value": f"{text1} != {text2}"})
 
         # 將子節點添加到堆疊中
