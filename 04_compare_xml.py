@@ -122,16 +122,15 @@ def find_differences(elem1, elem2, key, path='.'):
     text1 = elem1.text.strip() if elem1.text is not None else ""
     text2 = elem2.text.strip() if elem2.text is not None else ""
 
-    differences_num = 0
-    if is_valid_number(text1) and is_valid_number(text2):
-        # 去掉逗號並轉為整數
-        format_text1 = remove_commas_and_convert(text1)
-        format_text2 = remove_commas_and_convert(text2)
-
-        # 相減
-        differences_num = format_text1 - format_text2
-
     if text1 != text2:
+        differences_num = 0
+        if is_valid_number(text1) and is_valid_number(text2):
+            # 去掉逗號並轉為整數
+            format_text1 = remove_commas_and_convert(text1)
+            format_text2 = remove_commas_and_convert(text2)
+
+            differences_num = format_text1 - format_text2
+
         differences.append({"Key": key, "Path": path, "Type": "Text Mismatch","Description": differences_num , "Value": f"{text1} != {text2}"})
 
     children1 = list(elem1)
