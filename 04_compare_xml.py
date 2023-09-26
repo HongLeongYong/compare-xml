@@ -302,6 +302,7 @@ def main():
 
     #         if index % 1000 == 0:
     #             print(f"Processing {index + 1} files")
+    '''----------------------------------------------------------------------'''
 
     '''IO操作'''
     with ThreadPoolExecutor() as executor:
@@ -313,6 +314,7 @@ def main():
 
             if index % 1000 == 0:
                 print(f"Processing {index + 1} files")
+    '''----------------------------------------------------------------------'''
 
     '''正常執行'''
     # for index, file in enumerate(os.listdir(gv.before_file_directory)):
@@ -332,6 +334,7 @@ def main():
 
     #     if index % 1000 == 0:
     #         print(f"Processing {index + 1} files")
+    '''----------------------------------------------------------------------'''
 
 
     print(f"Total Processing {index + 1} files")
