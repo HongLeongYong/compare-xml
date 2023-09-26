@@ -109,156 +109,8 @@ def is_valid_number(s):
 def remove_commas_and_convert(s):
     return int(s.replace(',',''))
 
-# # 對比兩個 element，並將不同之處存入 differences
-# def find_differences(elem1, elem2, key, path='.'):
-#     differences = []
-
-#     if elem1.tag != elem2.tag:
-#         differences.append({"Key": key, "Path": path, "Type": "Tag Mismatch","Description": None , "Value": f"{elem1.tag} != {elem2.tag}"})
-        
-#     if elem1.attrib != elem2.attrib:
-#         differences.append({"Key": key, "Path": path, "Type": "Attribute Mismatch","Description": None,  "Value": f"{elem1.attrib} != {elem2.attrib}"})
-
-#     text1 = elem1.text.strip() if elem1.text is not None else ""
-#     text2 = elem2.text.strip() if elem2.text is not None else ""
-
-#     if text1 != text2:
-#         differences_num = 0
-#         if is_valid_number(text1) and is_valid_number(text2):
-#             # 去掉逗號並轉為整數
-#             format_text1 = remove_commas_and_convert(text1)
-#             format_text2 = remove_commas_and_convert(text2)
-
-#             differences_num = format_text1 - format_text2
-
-#         differences.append({"Key": key, "Path": path, "Type": "Text Mismatch","Description": differences_num , "Value": f"{text1} != {text2}"})
-
-#     children1 = list(elem1)
-#     children2 = list(elem2)
-    
-#     for idx, (child1, child2) in enumerate(zip(children1, children2)):
-#         #如果 child 數量不相等
-#         if len(child1) != len(child2):
-
-#             before_blocks = extract_blocks(child1)
-#             after_blocks = extract_blocks(child2)
-
-#             tag_name = child1[0].tag
-
-#             if len(before_blocks) > len(after_blocks):
-#                 success_matched_after_indices = []  # 存儲成功對比的after索引                
-
-#                 for before_index, before_key in before_blocks.items():
-#                     success_compare = False
-#                     before_first_key = before_key[0]
-#                     before_second_key = before_key[1]
-                    
-#                     # 第一次: 使用 first key 比較
-#                     for after_index, after_key in after_blocks.items():
-#                         after_first_key = after_key[0]
-
-#                         if before_first_key == after_first_key:
-#                             child_path = f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
-#                             differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
-#                             success_matched_after_indices.append(after_index) 
-#                             success_compare = True
-#                             del after_blocks[after_index]
-#                             break
-                    
-#                     # 第二次: 使用 second key 比較
-#                     if success_compare == False :
-#                         for after_index, after_key in after_blocks.items():
-#                             after_second_key = after_key[1]
-
-#                             if before_second_key == after_second_key:
-#                                 child_path = f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
-#                                 differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
-#                                 success_matched_after_indices.append(after_index) #成功匹配的after索引
-#                                 success_compare = True
-#                                 del after_blocks[after_index]
-#                                 break
-
-#                     # 都比對不了，append before 內容
-#                     if success_compare == False:
-#                         differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Missing in after", "Description": "Element is missing", "Value": None})
-#                         for elem in child1[before_index].iter():
-#                             differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
-
-#                 # 沒有比對成功 after
-#                 success_after_set = set(success_matched_after_indices)
-#                 after_set = set(range(len(after_blocks)))
-#                 missing_after_set = after_set - success_after_set
-
-#                 for after_index in missing_after_set:
-#                     differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Miss match in after", "Description": "Element is missing", "Value": None})
-#                     for elem in child2[after_index].iter():
-#                         differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
-         
-                    
-#             else: # len(after_blocks) > len(before_blocks):
-#                 success_matched_before_indices = []  # 存儲成功對比的before索引
-
-#                 for after_index, after_key in after_blocks.items():
-#                     success_compare = False
-#                     after_first_key = after_key[0]
-#                     after_second_key = after_key[1]
-
-#                     # 第一次: 使用 first key 比較
-#                     for before_index, before_key in before_blocks.items():
-#                         before_first_key = before_key[0]                        
-                        
-#                         if after_first_key == before_first_key:
-#                             child_path = f"{path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
-#                             differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
-#                             success_matched_before_indices.append(before_index) #成功匹配的before索引
-#                             success_compare = True
-#                             del before_blocks[before_index]
-#                             break
-
-#                     # 第二次: 使用 second key 比較
-#                     if success_compare == False:
-#                         for before_index, before_key in before_blocks.items():
-#                             before_second_key = before_key[1]
-
-#                             if after_second_key == before_second_key:
-#                                 child_path = f"{path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
-#                                 differences.extend(find_differences(child1[before_index], child2[after_index], key=key, path=child_path))
-#                                 success_matched_before_indices.append(before_index) #成功匹配的before索引
-#                                 success_compare = True
-#                                 del before_blocks[before_index]
-#                                 break
-
-#                     # 都比對不了，append after 內容
-#                     if success_compare == False:
-#                         differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Missing in before", "Description": "Element is missing", "Value": None})
-#                         for elem in child2[after_index].iter():
-#                             differences.append({"Key": key, "Path": f"{path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
-
-#                 # 沒有比對成功 before
-#                 success_before_set = set(success_matched_before_indices)
-#                 before_set = set(range(len(before_blocks)))
-#                 missing_before_set = before_set - success_before_set
-
-#                 for before_index in missing_before_set:
-#                     differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Miss match in before", "Description": "Element is missing", "Value": None})
-#                     for elem in child1[before_index].iter():
-#                         differences.append({"Key": key, "Path": f"{path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]", "Type": "Show Missing", "Description": f"{elem.tag}" , "Value": f"{elem.text}"})
-
-#         else:  # len(child1) == len(child2):
-#             child_path = f"{path}/{child1.tag}[{idx}]"
-#             differences.extend(find_differences(child1, child2, key= key, path=child_path))
-
-#     if len(children1) > len(children2):
-#         for idx, child in enumerate(children1[len(children2):]):
-#             differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children2)+idx}]", "Type": "Missing in after", "Description": "Element is missing", "Value": None})
-#     elif len(children1) < len(children2):
-#         for idx, child in enumerate(children2[len(children1):]):
-#             differences.append({"Key": key, "Path": f"{path}/{child.tag}[{len(children1)+idx}]", "Type": "Missing in before", "Description": "Element is missing", "Value": None})
-
-#     return differences
-
 # find_differences 函數迭代形式
-def find_differences_iterative(elem1, elem2, key, path='.'):
+def find_differences(elem1, elem2, key, path='.'):
     stack = [(elem1, elem2, key, path)]
     differences = []
 
@@ -267,9 +119,11 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
 
         if cur_elem1.tag != cur_elem2.tag:
             differences.append({"Key": cur_key, "Path": cur_path, "Type": "Tag Mismatch","Description": None , "Value": f"{cur_elem1.tag} != {cur_elem2.tag}"})
+            continue
         
         if cur_elem1.attrib != cur_elem2.attrib:
             differences.append({"Key": cur_key, "Path": cur_path, "Type": "Attribute Mismatch","Description": None,  "Value": f"{cur_elem1.attrib} != {cur_elem2.attrib}"})
+            continue
 
         text1 = cur_elem1.text.strip() if cur_elem1.text is not None else ""
         text2 = cur_elem2.text.strip() if cur_elem2.text is not None else ""
@@ -401,12 +255,12 @@ def find_differences_iterative(elem1, elem2, key, path='.'):
                 child_path = f"{cur_path}/{child1.tag}[{idx}]"
                 stack.append((child1, child2, cur_key, child_path))
 
-        # if len(children1) > len(children2):
-        #     for idx, child in enumerate(children1[len(children2):]):
-        #         differences.append({"Key": cur_key, "Path": f"{cur_path}/{child.tag}[{len(children2)+idx}]", "Type": "Missing in after", "Description": "Element is missing", "Value": None})
-        # elif len(children1) < len(children2):
-        #     for idx, child in enumerate(children2[len(children1):]):
-        #         differences.append({"Key": cur_key, "Path": f"{cur_path}/{child.tag}[{len(children1)+idx}]", "Type": "Missing in before", "Description": "Element is missing", "Value": None})
+        if len(children1) > len(children2):
+            for idx, child in enumerate(children1[len(children2):]):
+                differences.append({"Key": cur_key, "Path": f"{cur_path}/{child.tag}[{len(children2)+idx}]", "Type": "Missing in after", "Description": "Element is missing", "Value": None})
+        elif len(children1) < len(children2):
+            for idx, child in enumerate(children2[len(children1):]):
+                differences.append({"Key": cur_key, "Path": f"{cur_path}/{child.tag}[{len(children1)+idx}]", "Type": "Missing in before", "Description": "Element is missing", "Value": None})
 
     return differences
 
@@ -428,7 +282,7 @@ def process_file(file):
         before_root = ET.fromstring(before_file_string.encode('utf-8'))
         after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
-        differences = find_differences_iterative(before_root, after_root, key=file)
+        differences = find_differences(before_root, after_root, key=file)
         return differences
     return []
 
@@ -472,7 +326,7 @@ def main():
     #         before_root = ET.fromstring(before_file_string.encode('utf-8'))
     #         after_root = ET.fromstring(after_file_string.encode('utf-8'))
 
-    #         differences = find_differences_iterative(before_root, after_root, key = file)
+    #         differences = find_differences(before_root, after_root, key = file)
     #         for d in differences:
     #             all_differences.append(d)
 
