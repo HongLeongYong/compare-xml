@@ -379,7 +379,6 @@ if __name__ == "__main__":
         # 生成profile結果
         cProfile.run('main()', filename=profile_file)
         
-        # 轉換為CSV文件
         convert_profile_to_csv(profile_file, csv_file)
     else:
         main()
