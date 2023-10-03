@@ -170,17 +170,19 @@ def find_differences(elem1, elem2, key, path='.'):
                         success_compare = False
                         before_first_key = before_key[0]
                         before_second_key = before_key[1]
+                        before_child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
 
                         # 第一次: 使用 first key 比較
                         for after_index, after_key in after_blocks.items():
                             after_first_key = after_key[0]
 
                             if before_first_key == after_first_key:
-                                child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
-                                stack.append((child1[before_index],
-                                            child2[after_index],
-                                            cur_key,
-                                            child_path))
+                                stack.append((
+                                    child1[before_index],
+                                    child2[after_index],
+                                    cur_key,
+                                    before_child_path
+                                            ))
                                 success_matched_after_indices.append(after_index)
                                 success_compare = True
                                 del after_blocks[after_index]
@@ -191,8 +193,12 @@ def find_differences(elem1, elem2, key, path='.'):
                                 after_second_key = after_key[1]
 
                                 if before_second_key == after_second_key:
-                                    child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
-                                    stack.append((child1[before_index], child2[after_index], cur_key, child_path))
+                                    stack.append((
+                                        child1[before_index],
+                                        child2[after_index],
+                                        cur_key,
+                                        before_child_path
+                                        ))
                                     success_matched_after_indices.append(after_index) #成功匹配的after索引
                                     success_compare = True
                                     del after_blocks[after_index]
@@ -200,17 +206,21 @@ def find_differences(elem1, elem2, key, path='.'):
 
                         # 都比對不了，append before 內容
                         if success_compare is False:
-                            differences.append({"Key": cur_key,
-                                                "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]",
-                                                "Type": "Missing in after",
-                                                "Description": "Element is missing",
-                                                "Value": None})
+                            differences.append({
+                                "Key": cur_key,
+                                "Path": before_child_path,
+                                "Type": "Missing in after",
+                                "Description": "Element is missing",
+                                "Value": None
+                                })
                             for elem in child1[before_index].iter():
-                                differences.append({"Key": cur_key,
-                                                    "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]",
-                                                    "Type": "Show Missing",
-                                                    "Description": f"{elem.tag}",
-                                                    "Value": f"{elem.text}"})
+                                differences.append({
+                                    "Key": cur_key,
+                                    "Path": before_child_path,
+                                    "Type": "Show Missing",
+                                    "Description": f"{elem.tag}",
+                                    "Value": f"{elem.text}"
+                                    })
 
                     # 沒有比對成功 after
                     success_after_set = set(success_matched_after_indices)
@@ -218,17 +228,22 @@ def find_differences(elem1, elem2, key, path='.'):
                     missing_after_set = after_set - success_after_set
 
                     for after_index in missing_after_set:
-                        differences.append({"Key": cur_key,
-                                            "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{after_index}]",
-                                            "Type": "Miss match in after",
-                                            "Description": "Element is missing",
-                                            "Value": None})
+                        after_child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{after_index}]"
+                        differences.append({
+                            "Key": cur_key,
+                            "Path": after_child_path,
+                            "Type": "Miss match in after",
+                            "Description": "Element is missing",
+                            "Value": None
+                            })
                         for elem in child2[after_index].iter():
-                            differences.append({"Key": cur_key,
-                                                "Path": f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]",
-                                                "Type": "Show Missing",
-                                                "Description": f"{elem.tag}",
-                                                "Value": f"{elem.text}"})            
+                            differences.append({
+                                "Key": cur_key,
+                                "Path": after_child_path,
+                                "Type": "Show Missing",
+                                "Description": f"{elem.tag}",
+                                "Value": f"{elem.text}"
+                                })
                 else: # len(after_blocks) > len(before_blocks):
                     success_matched_before_indices = []  # 存儲成功對比的before索引
 
@@ -236,13 +251,18 @@ def find_differences(elem1, elem2, key, path='.'):
                         success_compare = False
                         after_first_key = after_key[0]
                         after_second_key = after_key[1]
+                        after_child_path = f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]"
 
                         # 第一次: 使用 first key 比較
                         for before_index, before_key in before_blocks.items():
                             before_first_key = before_key[0]
                             if after_first_key == before_first_key:
-                                child_path = f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
-                                stack.append((child1[before_index], child2[after_index], cur_key, child_path))
+                                stack.append((
+                                    child1[before_index],
+                                    child2[after_index],
+                                    cur_key,
+                                    after_child_path
+                                ))
                                 success_matched_before_indices.append(before_index) #成功匹配的before索引
                                 success_compare = True
                                 del before_blocks[before_index]
@@ -254,8 +274,12 @@ def find_differences(elem1, elem2, key, path='.'):
                                 before_second_key = before_key[1]
 
                                 if after_second_key == before_second_key:
-                                    child_path = f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
-                                    stack.append((child1[before_index], child2[after_index], cur_key, child_path))
+                                    stack.append((
+                                        child1[before_index],
+                                        child2[after_index],
+                                        cur_key,
+                                        after_child_path
+                                        ))
                                     success_matched_before_indices.append(before_index) #成功匹配的before索引
                                     success_compare = True
                                     del before_blocks[before_index]
@@ -263,17 +287,21 @@ def find_differences(elem1, elem2, key, path='.'):
 
                         # 都比對不了，append after 內容
                         if success_compare is False:
-                            differences.append({"Key": cur_key,
-                                                "Path": f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]",
-                                                "Type": "Missing in before",
-                                                "Description": "Element is missing",
-                                                "Value": None})
+                            differences.append({
+                                "Key": cur_key,
+                                "Path": after_child_path,
+                                "Type": "Missing in before",
+                                "Description": "Element is missing",
+                                "Value": None
+                                })
                             for elem in child2[after_index].iter():
-                                differences.append({"Key": cur_key,
-                                                    "Path": f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]",
-                                                    "Type": "Show Missing",
-                                                    "Description": f"{elem.tag}",
-                                                    "Value": f"{elem.text}"})
+                                differences.append({
+                                    "Key": cur_key,
+                                    "Path": after_child_path,
+                                    "Type": "Show Missing",
+                                    "Description": f"{elem.tag}",
+                                    "Value": f"{elem.text}"
+                                    })
 
                     # 沒有比對成功 before
                     success_before_set = set(success_matched_before_indices)
@@ -281,17 +309,22 @@ def find_differences(elem1, elem2, key, path='.'):
                     missing_before_set = before_set - success_before_set
 
                     for before_index in missing_before_set:
-                        differences.append({"Key": cur_key,
-                                            "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]",
-                                            "Type": "Miss match in before",
-                                            "Description": "Element is missing",
-                                            "Value": None})
+                        before_child_path = f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]"
+                        differences.append({
+                            "Key": cur_key,
+                            "Path": before_child_path,
+                            "Type": "Miss match in before",
+                            "Description": "Element is missing",
+                            "Value": None
+                            })
                         for elem in child1[before_index].iter():
-                            differences.append({"Key": cur_key,
-                                                "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]",
-                                                "Type": "Show Missing",
-                                                "Description": f"{elem.tag}",
-                                                "Value": f"{elem.text}"})
+                            differences.append({
+                                "Key": cur_key,
+                                "Path": before_child_path,
+                                "Type": "Show Missing",
+                                "Description": f"{elem.tag}",
+                                "Value": f"{elem.text}"
+                                })
 
             else:  # len(child1) == len(child2):
                 child_path = f"{cur_path}/{child1.tag}[{idx}]"
@@ -299,18 +332,22 @@ def find_differences(elem1, elem2, key, path='.'):
 
         if len(children1) > len(children2):
             for idx, child in enumerate(children1[len(children2):]):
-                differences.append({"Key": cur_key,
-                                    "Path": f"{cur_path}/{child.tag}[{len(children2)+idx}]",
-                                    "Type": "Missing in after",
-                                    "Description": "Element is missing",
-                                    "Value": None})
+                differences.append({
+                    "Key": cur_key,
+                    "Path": f"{cur_path}/{child.tag}[{len(children2)+idx}]",
+                    "Type": "Missing in after",
+                    "Description": "Element is missing",
+                    "Value": None
+                    })
         elif len(children1) < len(children2):
             for idx, child in enumerate(children2[len(children1):]):
-                differences.append({"Key": cur_key,
-                                    "Path": f"{cur_path}/{child.tag}[{len(children1)+idx}]",
-                                    "Type": "Missing in before",
-                                    "Description": "Element is missing",
-                                    "Value": None})
+                differences.append({
+                    "Key": cur_key,
+                    "Path": f"{cur_path}/{child.tag}[{len(children1)+idx}]",
+                    "Type": "Missing in before",
+                    "Description": "Element is missing",
+                    "Value": None
+                    })
 
     return differences
 
