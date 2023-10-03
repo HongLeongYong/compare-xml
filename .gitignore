@@ -1,0 +1,5 @@
+# 忽略所有 .vscode/ 目錄下的檔案
+.vscode/
+
+# 忽略所有 __pycache__/ 目錄下的檔案
+__pycache__/
