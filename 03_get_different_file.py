@@ -1,18 +1,24 @@
+"""
+這是一個用於比較兩個目錄中檔案差異的模組。
+"""
+
 import os
 import time
 import global_variable as gv
 
-
 def move_file(file_name, source_directory, target_directory):
+    """
+    移動檔案從來源目錄到目標目錄。
+    """
     source_file = os.path.join(source_directory, file_name)
     target_file = os.path.join(target_directory, file_name)
     os.rename(source_file, target_file)
 
-
-time_start = time.time()
+# 開始計時
+TIME_START = time.time()
 print("開始執行")
 
-move_file_boolean = False
+MOVE_FILE_BOOLEAN = False
 
 # 判斷 after directory 有，before directory 沒有的檔案
 before_file_names = os.listdir(gv.before_file_directory)
@@ -47,13 +53,13 @@ with open(os.path.join(gv.result_directory, "result.txt"), "w", encoding="utf-8"
         for file in after_file_names:
             f.write(file + "\n")
 
-if move_file_boolean:
+if MOVE_FILE_BOOLEAN:
     for file in before_file_names_2:
         move_file(file, gv.before_file_directory, gv.result_directory)
 
     for file in after_file_names:
         move_file(file, gv.after_file_directory, gv.result_directory)
 
-
-time_end = time.time()
-print("花費時間: ", time_end - time_start, "秒")
+# 結束計時
+TIME_END = time.time()
+print("花費時間: ", TIME_END - TIME_START, "秒")
