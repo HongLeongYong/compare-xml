@@ -1,32 +1,31 @@
 '''
-從 txt 讀取檔案名稱，並複製到另一個資料夾
+從 need.txt 讀取檔案名稱，並從 before 和 after 資料夾複製檔案到 result 資料夾，並重新命名
 '''
 import os
 import shutil
 import global_variable as gv
 
-# read file name from txt
-file_list = []
-with open(os.path.join(gv.result_directory, 'need.txt'), "r", encoding="utf-8") as f:
-    for line in f:
-        file_list.append(line.replace('\n', ''))
 
-# copy file to target directory
-for file in file_list:
-    # copy before file to target directory
-    before_ori_filepath = os.path.join(gv.before_file_directory, file)
-    shutil.copy(before_ori_filepath, gv.result_directory)
-    # rename file
-    renamed_before_file = file.replace('.xml', '_before.xml')
-    before_unrename_filepath = os.path.join(gv.result_directory, file)
-    before_renamed_filepath = os.path.join(gv.result_directory, renamed_before_file)
-    os.rename(before_unrename_filepath, before_renamed_filepath)
-    
-    # copy after file to target directory
-    after_ori_filepath = os.path.join(gv.after_file_directory, file)
-    shutil.copy(after_ori_filepath, gv.result_directory)
-    # rename file
-    renamed_after_file = file.replace('.xml', '_after.xml')
-    after_unrename_filepath = os.path.join(gv.result_directory, file)
-    after_renamed_filepath = os.path.join(gv.result_directory, renamed_after_file)
-    os.rename(after_unrename_filepath, after_renamed_filepath)
+def copy_and_rename_files(file_names_list, ori_directory, new_suffix):
+    '''
+    複製和重新命名 before 和 after 檔案
+    '''
+    for file_name in file_names_list:
+        ori_filepath = os.path.join(ori_directory, file_name)
+        shutil.copy(ori_filepath, gv.result_directory)
+
+        renamed_file = file_name.replace('.xml', new_suffix)
+        unrenamed_filepath = os.path.join(gv.result_directory, file_name)
+        renamed_filepath = os.path.join(gv.result_directory, renamed_file)
+
+        os.rename(unrenamed_filepath, renamed_filepath)
+
+
+if __name__ == "__main__":
+    # 讀取檔案名稱
+    with open(os.path.join(gv.result_directory, 'need.txt'), "r", encoding="utf-8") as f:
+        file_list = [line.strip() for line in f]
+
+    # 複製和重新命名 before 和 after 檔案
+    copy_and_rename_files(file_list, gv.before_file_directory, '_before.xml')
+    copy_and_rename_files(file_list, gv.after_file_directory, '_after.xml')
