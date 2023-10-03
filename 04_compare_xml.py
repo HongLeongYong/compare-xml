@@ -1,4 +1,6 @@
-# 對比xml，並顯示不同之處
+'''
+    對比xml, 並顯示不同之處
+'''
 import cProfile
 import pstats
 import csv
@@ -6,7 +8,7 @@ import os
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor # io
-from concurrent.futures import ProcessPoolExecutor # cpu 操作
+# from concurrent.futures import ProcessPoolExecutor # cpu 操作
 from lxml import etree as ET
 import pandas as pd
 import global_variable as gv
@@ -21,24 +23,30 @@ patterns = [re.compile(p) for p in [
     '<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>'
 ]]
 
-# 去除無需比對內容
+
 def reprocess_string(input_string):
+    '''
+    去除無需比對內容
+    '''
     for pattern in patterns:
         input_string = pattern.sub('', input_string)
     return input_string
 
-# 獲取第n個出現的 text
-def find_first_n_text(element, n: int):
+
+def find_first_n_text(element, find_numbers: int):
+    '''
+    獲取第n個出現的 text
+    '''
     found_texts = []
 
     def helper(ele):
         nonlocal found_texts
-        if len(found_texts) >= n:
+        if len(found_texts) >= find_numbers:
             return
 
         if ele.text and ele.text.strip():
             found_texts.append(ele.text.strip())
-            if len(found_texts) >= n:
+            if len(found_texts) >= find_numbers:
                 return
 
         for child in ele:
@@ -46,15 +54,17 @@ def find_first_n_text(element, n: int):
 
     helper(element)
 
-    if len(found_texts) >= n:
-        return "_".join(found_texts[:n])
-    elif len(found_texts) > 0:
+    if len(found_texts) >= find_numbers:
+        return "_".join(found_texts[:find_numbers])
+    if len(found_texts) > 0:
         return "_".join(found_texts)
-    else:
-        return None
+    return None
 
-# 尋找是否有 <CD_POST_DOC> 的 text
+
 def find_cd_post_doc_text(element):
+    '''
+    尋找是否有 <CD_POST_DOC> 的 text
+    '''
     if element.tag == 'CD_POST_DOC' and element.text and element.text.strip():
         return element.text.strip()
     for child in element:
@@ -63,9 +73,12 @@ def find_cd_post_doc_text(element):
             return result
     return None
 
-# 迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
-# blocks = {0: ["cd_post_doc", "first 5 text"], ....}
+
 def extract_blocks(tree):
+    '''
+    迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
+    blocks = {0: ["cd_post_doc", "first 5 text"], ....}
+    '''
     blocks = {}
     for index, child in enumerate(tree):
         cd_post_doc_key = find_cd_post_doc_text(child)
@@ -78,38 +91,26 @@ def extract_blocks(tree):
         blocks[index] = [key, second_key]
     return blocks
 
-
-"""
-    Return whether the string s is a valid number.
-    A valid number is an optional negative sign followed by
-    one or more digits followed by any number of comma-separated
-    groups of three digits.
-
-    >>> is_valid_number('123')
-    True
-    >>> is_valid_number('-1,234')
-    True
-    >>> is_valid_number('1,234,567')
-    True
-    >>> is_valid_number('12,34,567')
-    False
-    >>> is_valid_number('1234567')
-    False
-"""
-# 判斷是否為數字
-def is_valid_number(s):
+def is_valid_number(input_string):
+    '''
+    判斷是否為數字, 正確 '-1,234' or '1,234,567' or '123'
+    '''
     # 匹配只有數字（不包含逗號）的情況
-    if re.match(r'^-?\d{1,3}$', s):
+    if re.match(r'^-?\d{1,3}$', input_string):
         return True
     # 匹配包含逗號的數字格式
-    return re.match(r'^-?\d{1,3}(,\d{3})+$', s) is not None
+    return re.match(r'^-?\d{1,3}(,\d{3})+$', input_string) is not None
 
-# 去除逗號, 變成 int
-def remove_commas_and_convert(s):
-    return int(s.replace(',',''))
+def remove_commas_and_convert(input_string):
+    '''
+    去除逗號, 變成 int
+    '''
+    return int(input_string.replace(',',''))
 
-# find_differences 函數迭代形式
 def find_differences(elem1, elem2, key, path='.'):
+    '''
+    find_differences 函數迭代形式
+    '''
     stack = [(elem1, elem2, key, path)]
     differences = []
 
@@ -180,13 +181,12 @@ def find_differences(elem1, elem2, key, path='.'):
                                             child2[after_index],
                                             cur_key,
                                             child_path))
-                                success_matched_after_indices.append(after_index) 
+                                success_matched_after_indices.append(after_index)
                                 success_compare = True
                                 del after_blocks[after_index]
                                 break
-                        
                         # 第二次: 使用 second key 比較
-                        if success_compare == False :
+                        if success_compare is False :
                             for after_index, after_key in after_blocks.items():
                                 after_second_key = after_key[1]
 
@@ -199,7 +199,7 @@ def find_differences(elem1, elem2, key, path='.'):
                                     break
 
                         # 都比對不了，append before 內容
-                        if success_compare == False:
+                        if success_compare is False:
                             differences.append({"Key": cur_key,
                                                 "Path": f"{cur_path}/{child1.tag}[{idx}]/{tag_name}[{before_index}]",
                                                 "Type": "Missing in after",
@@ -228,9 +228,7 @@ def find_differences(elem1, elem2, key, path='.'):
                                                 "Path": f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]",
                                                 "Type": "Show Missing",
                                                 "Description": f"{elem.tag}",
-                                                "Value": f"{elem.text}"})
-            
-                        
+                                                "Value": f"{elem.text}"})            
                 else: # len(after_blocks) > len(before_blocks):
                     success_matched_before_indices = []  # 存儲成功對比的before索引
 
@@ -241,8 +239,7 @@ def find_differences(elem1, elem2, key, path='.'):
 
                         # 第一次: 使用 first key 比較
                         for before_index, before_key in before_blocks.items():
-                            before_first_key = before_key[0]                        
-                            
+                            before_first_key = before_key[0]
                             if after_first_key == before_first_key:
                                 child_path = f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{before_index}]"
                                 stack.append((child1[before_index], child2[after_index], cur_key, child_path))
@@ -252,7 +249,7 @@ def find_differences(elem1, elem2, key, path='.'):
                                 break
 
                         # 第二次: 使用 second key 比較
-                        if success_compare == False:
+                        if success_compare is False:
                             for before_index, before_key in before_blocks.items():
                                 before_second_key = before_key[1]
 
@@ -265,7 +262,7 @@ def find_differences(elem1, elem2, key, path='.'):
                                     break
 
                         # 都比對不了，append after 內容
-                        if success_compare == False:
+                        if success_compare is False:
                             differences.append({"Key": cur_key,
                                                 "Path": f"{cur_path}/{child2.tag}[{idx}]/{tag_name}[{after_index}]",
                                                 "Type": "Missing in before",
@@ -320,11 +317,18 @@ def find_differences(elem1, elem2, key, path='.'):
 
 
 def read_and_reprocess_file(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        file_string = f.read()
+    '''
+    開啟檔案，轉換成 string
+    '''
+    with open(file_path, "r", encoding="utf-8") as file:
+        file_string = file.read()
     return reprocess_string(file_string)
 
+# pylint: disable=c-extension-no-member
 def process_file(file):
+    '''
+    處理檔案
+    '''
     before_file_path = os.path.join(gv.before_file_directory, file)
     after_file_path = os.path.join(gv.after_file_directory, file)
 
@@ -340,12 +344,16 @@ def process_file(file):
     return []
 
 def main():
+    '''
+    主程式  
+    '''
     start_time = time.time()
     print("Start time: " + str(start_time))
 
     all_differences = []
+    index = 0
 
-    '''CPU操作'''
+    ## '''CPU操作'''
     # with ProcessPoolExecutor() as executor:
     #     for index, file in enumerate(os.listdir(gv.before_file_directory)):
     #         future = executor.submit(process_file, file)
@@ -355,9 +363,9 @@ def main():
 
     #         if index % 1000 == 0:
     #             print(f"Processing {index + 1} files")
-    '''----------------------------------------------------------------------'''
+    ## ----------------------------------------------------------------------'''
 
-    '''IO操作'''
+    ## '''IO操作'''
     with ThreadPoolExecutor() as executor:
         for index, file in enumerate(os.listdir(gv.before_file_directory)):
             future = executor.submit(process_file, file)
@@ -367,9 +375,9 @@ def main():
 
             if index % 1000 == 0:
                 print(f"Processing {index + 1} files")
-    '''----------------------------------------------------------------------'''
+    ## '''----------------------------------------------------------------------'''
 
-    '''正常執行'''
+    ## '''正常執行'''
     # for index, file in enumerate(os.listdir(gv.before_file_directory)):
     #     before_file_path = os.path.join(gv.before_file_directory, file)
     #     after_file_path = os.path.join(gv.after_file_directory, file)
@@ -387,7 +395,7 @@ def main():
 
     #     if index % 1000 == 0:
     #         print(f"Processing {index + 1} files")
-    '''----------------------------------------------------------------------'''
+    ## ----------------------------------------------------------------------
 
 
     print(f"Total Processing {index + 1} files")
@@ -402,19 +410,20 @@ def main():
 
 
 def convert_profile_to_csv(pstats_file, csv_file):
+    '''
+    把 pstats 轉成 csv
+    '''
     stats = pstats.Stats(pstats_file)
     stats.sort_stats('cumulative')
-    
-    with open(csv_file, 'w', newline='') as csvfile:
-        fieldnames = ['filename', 'line', 'func_name', 'ccalls', 'ncalls', 'ttot', 'cum_calls']
+    fieldnames = ['filename', 'line', 'func_name', 'ccalls', 'ncalls', 'ttot', 'cum_calls']
+    with open(csv_file, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        
         writer.writeheader()
-        
         for func, stat in stats.stats.items():
             filename, line, func_name = func
-            ccalls, ncalls, ttot, cum_calls, callers = stat
-            writer.writerow({
+            # 使用 _ 來忽略未使用的變量
+            ccalls, ncalls, ttot, cum_calls, _ = stat
+            row_data = {
                 'filename': filename,
                 'line': line,
                 'func_name': func_name,
@@ -422,19 +431,19 @@ def convert_profile_to_csv(pstats_file, csv_file):
                 'ncalls': ncalls,
                 'ttot': ttot,
                 'cum_calls': cum_calls
-            })
+            }
+            writer.writerow(row_data)
+
 
 if __name__ == "__main__":
     # 是否產出報告
-    output_cprofile_flag = False
+    OUTPUT_CPROFILE_FLAG = False
 
-    if output_cprofile_flag:
-        profile_file = 'profile_result.pstats'
-        csv_file = 'profile_result.csv'
-        
+    if OUTPUT_CPROFILE_FLAG:
+        PROFILE_FILE = 'profile_result.pstats'
+        CSV_FILE = 'profile_result.csv'
         # 生成profile結果
-        cProfile.run('main()', filename=profile_file)
-        
-        convert_profile_to_csv(profile_file, csv_file)
+        cProfile.run('main()', filename=PROFILE_FILE)
+        convert_profile_to_csv(PROFILE_FILE, CSV_FILE)
     else:
         main()
