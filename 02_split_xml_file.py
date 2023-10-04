@@ -6,6 +6,7 @@ import os
 import time
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
+from collections import Counter
 import global_variable as gv
 
 # 初始化一個空字典來存儲合成鍵和其出現次數
@@ -76,21 +77,28 @@ def main():
     process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory)
     process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
 
-    print("Composite Keys with Frequency Greater Than 1:")
-    keys_with_frequency_gt_1 = {}
-    for key, value in composite_key_frequency_dict.items():
-        if value > 1:
-            print(f"{key}: {value}")
-            keys_with_frequency_gt_1[key] = value
+    # print("Composite Keys with Frequency Greater Than 1:")
+    # keys_with_frequency_gt_1 = {}
+    # for key, value in composite_key_frequency_dict.items():
+    #     if value > 1:
+    #         print(f"{key}: {value}")
+    #         keys_with_frequency_gt_1[key] = value
 
-    # 繪製圖表
+    # 統計每個出現頻率的 key 數量
+    frequency_counter = Counter(composite_key_frequency_dict.values())
+    print(f"Frequency of keys: {frequency_counter}")
+
+    # 繪製餅狀圖
+    labels = [f"{k} times" for k in frequency_counter.keys()]
+    sizes = list(frequency_counter.values())
+    colors = ['blue', 'red', 'green', 'yellow']  # 添加更多顏色，如果有更多種出現次數
+    explode = [0.1] * len(labels)  # 將所有部分都突出顯示
+
     plt.figure(figsize=(10, 6))
-    keys = list(keys_with_frequency_gt_1.keys())
-    values = list(keys_with_frequency_gt_1.values())
-    plt.barh(keys, values, color='blue')
-    plt.xlabel('Frequency')
-    plt.ylabel('Composite Keys')
-    plt.title('Composite Keys with Frequency Greater Than 1')
+    plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+            autopct='%1.1f%%', shadow=True, startangle=90)
+    plt.axis('equal')  # 確保餅狀圖是個圓形
+    plt.title('Distribution of Key Frequencies')
     plt.show()
 
 if __name__ == "__main__":
