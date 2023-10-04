@@ -76,7 +76,7 @@ def process_files_in_directory(from_path, destination_path, frequency_dict):
 
 def func(pct, allvals):
     absolute = int(pct/100.*sum(allvals))
-    return "{:d}".format(absolute)
+    return "{:d} times\n({:1.1f}%)".format(absolute, pct)
 
 def draw_pie_chart(*data_dicts):
     """
