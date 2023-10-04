@@ -7,10 +7,15 @@ import time
 import xml.etree.ElementTree as ET
 import global_variable as gv
 
+# 初始化一個空字典來存儲合成鍵和其出現次數
+composite_key_frequency_dict = {}
+
 def split_and_save_xml_segments(filename, destination_directory):
     """
     讀取 XML 檔案，將其分割成多個段落，並儲存為新的 XML 檔案。
     """
+    global composite_key_frequency_dict # pylint: disable=global-variable-not-assigned
+
     with open(filename, "r", encoding="utf-8") as xml_file:
         xml_string = xml_file.read()
 
@@ -33,6 +38,13 @@ def split_and_save_xml_segments(filename, destination_directory):
 
         tree.write(os.path.join(destination_directory, output_name),
                    encoding="utf-8", xml_declaration=True)
+
+        # 計算出現次數
+        composite_key = f"{doc_temp_id}_{bp_id}_{commission_contract}_{policy_id}"
+        if composite_key in composite_key_frequency_dict:
+            composite_key_frequency_dict[composite_key] += 1
+        else:
+            composite_key_frequency_dict[composite_key] = 1
 
 def process_files_in_directory(from_path, destination_path):
     '''
@@ -62,6 +74,11 @@ def main():
     """
     process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory)
     process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
+
+    print("Composite Keys with Frequency Greater Than 1:")
+    for key, value in composite_key_frequency_dict.items():
+        if value > 1:
+            print(f"{key}: {value}")
 
 if __name__ == "__main__":
     main()
