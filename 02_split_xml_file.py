@@ -30,16 +30,16 @@ def split_and_save_xml_segments(filename, destination_directory):
         tree = ET.ElementTree(ET.fromstring(xml_segment))
         root = tree.getroot()
 
-        doc_temp_id = root.find('.//DOC_TEMP_ID').text
-        bp_id = root.find('.//BUSINESS_PARTNER_ID').text
-        commission_contract = root.find('.//COMMISSION_CONTRACT').text
-        policy_id = root.find('.//POLICY_ID').text
-
-        output_name = f"{doc_temp_id}_{bp_id}_{commission_contract}_{policy_id}_{segment_index}.xml"
-        output_name = output_name.replace('/', '_')
-
-        tree.write(os.path.join(destination_directory, output_name),
-                   encoding="utf-8", xml_declaration=True)
+        try:
+            doc_temp_id = root.find('.//DOC_TEMP_ID').text
+            bp_id = root.find('.//BUSINESS_PARTNER_ID').text
+            commission_contract = root.find('.//COMMISSION_CONTRACT').text
+            policy_id = root.find('.//POLICY_ID').text
+            if policy_id is None:
+                policy_id = root.find('.//POLICY1').text
+        except AttributeError:
+            if policy_id is None:
+                policy_id = "None"
 
         # 計算出現次數
         composite_key = f"{doc_temp_id}_{bp_id}_{commission_contract}_{policy_id}"
@@ -47,6 +47,13 @@ def split_and_save_xml_segments(filename, destination_directory):
             composite_key_frequency_dict[composite_key] += 1
         else:
             composite_key_frequency_dict[composite_key] = 1
+
+        output_name = f"{doc_temp_id}_{bp_id}_{commission_contract}_{policy_id}_{composite_key_frequency_dict[composite_key]}.xml"
+        output_name = output_name.replace('/', '_')
+
+        tree.write(os.path.join(destination_directory, output_name),
+                   encoding="utf-8", xml_declaration=True)
+
 
 def process_files_in_directory(from_path, destination_path):
     '''
@@ -90,10 +97,10 @@ def draw_pie_chart(data_dict):
 
 def main():
     """
-    主函數，負責調用其他函數以完成 XML 檔案的分割和儲存。
+    主函數，負責調用其他函數以完成 XML 檔案的分割和儲存, before 和 after 分別處理。
     """
     process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory)
-    process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
+    # process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
 
     # 調用繪製餅狀圖的方法
     draw_pie_chart(composite_key_frequency_dict)
