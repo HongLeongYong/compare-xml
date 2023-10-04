@@ -74,6 +74,10 @@ def process_files_in_directory(from_path, destination_path, frequency_dict):
     print(f"End time: {time_end}")
     print(f"Total time: {time_end - time_start}")
 
+def func(pct, allvals):
+    absolute = int(pct/100.*sum(allvals))
+    return "{:d}".format(absolute)
+
 def draw_pie_chart(*data_dicts):
     """
     繪製餅狀圖來表示 data_dicts 中各個值的出現頻率。
@@ -84,14 +88,13 @@ def draw_pie_chart(*data_dicts):
         plt.subplot(1, len(data_dicts), index)
 
         frequency_counter = Counter(data_dict.values())
-
         labels = [f"{k} times" for k in frequency_counter.keys()]
         sizes = list(frequency_counter.values())
         colors = ['blue', 'red', 'green', 'yellow']
         explode = [0.1] * len(labels)
 
         plt.pie(sizes, explode=explode, labels=labels, colors=colors,
-                autopct='%1.1f%%', shadow=True, startangle=90)
+                autopct=lambda pct: func(pct, sizes), shadow=True, startangle=90)
         plt.axis('equal')
         plt.title(f'Distribution of Key Frequencies {index}')
 
