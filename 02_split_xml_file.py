@@ -28,6 +28,8 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
 
         try:
             doc_temp_id = root.find('.//DOC_TEMP_ID').text
+            # if doc_temp_id in gv.z005_list: print(f'z005: {doc_temp_id}')
+            # if doc_temp_id in gv.z006_list: print(f'z006: {doc_temp_id}')
             bp_id = root.find('.//BUSINESS_PARTNER_ID').text
             commission_contract = root.find('.//COMMISSION_CONTRACT').text
             policy_id = root.find('.//POLICY_ID').text
