@@ -51,7 +51,7 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
                    encoding="utf-8", xml_declaration=True)
 
 
-def process_files_in_directory(from_path, destination_path):
+def process_files_in_directory(from_path, destination_path, frequency_dict):
     '''
     遍歷指定目錄下的所有 XML 檔案，將其分割並儲存到目標目錄。
     '''
@@ -64,8 +64,9 @@ def process_files_in_directory(from_path, destination_path):
     sorted_file_list = sorted(os.listdir(from_path))
 
     for index, file in enumerate(sorted_file_list):
-        split_and_save_xml_segments(filename=os.path.join(from_path, file),
-                                    destination_directory=destination_path)
+        split_and_save_xml_segments(filename = os.path.join(from_path, file),
+                                    destination_directory = destination_path,
+                                    frequency_dict = frequency_dict)
         if index % 100 == 0:
             print(f"Processing {index + 1} files")
 
@@ -78,22 +79,22 @@ def draw_pie_chart(*data_dicts):
     繪製餅狀圖來表示 data_dicts 中各個值的出現頻率。
     """
     plt.figure(figsize=(20, 10))
-    
+
     for index, data_dict in enumerate(data_dicts, start=1):
         plt.subplot(1, len(data_dicts), index)
-        
+
         frequency_counter = Counter(data_dict.values())
-        
+
         labels = [f"{k} times" for k in frequency_counter.keys()]
         sizes = list(frequency_counter.values())
         colors = ['blue', 'red', 'green', 'yellow']
         explode = [0.1] * len(labels)
-        
+
         plt.pie(sizes, explode=explode, labels=labels, colors=colors,
                 autopct='%1.1f%%', shadow=True, startangle=90)
         plt.axis('equal')
         plt.title(f'Distribution of Key Frequencies {index}')
-        
+
     plt.show()
 
 def main():
@@ -102,10 +103,10 @@ def main():
     """
     composite_key_frequency_dict_before = {}
     composite_key_frequency_dict_after = {}
-    
+
     process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory, composite_key_frequency_dict_before)
     process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory, composite_key_frequency_dict_after)
-    
+
     draw_pie_chart(composite_key_frequency_dict_before, composite_key_frequency_dict_after)
 
 if __name__ == "__main__":
