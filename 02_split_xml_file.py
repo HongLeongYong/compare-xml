@@ -78,7 +78,7 @@ def process_files_in_directory(from_path, destination_path, frequency_dict):
 
 def func(pct, allvals):
     absolute = int(round(pct/100.*sum(allvals)))
-    return "{:d} times\n({:1.1f}%)".format(absolute, pct)
+    return "{:d} xml \n({:1.1f}%)".format(absolute, pct)
 
 def draw_pie_chart(*data_dicts):
     """
@@ -116,7 +116,7 @@ def main():
     for key, value in composite_key_frequency_dict_before.items():
         if value > 2:
             print(f"before key '{key}' appears {value} times.")
-
+    print('-' * 50)
     # after - 印出出現次數大於 2 的 key 值
     for key, value in composite_key_frequency_dict_after.items():
         if value > 2:
