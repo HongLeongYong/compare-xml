@@ -5,8 +5,8 @@
 import os
 import time
 import xml.etree.ElementTree as ET
-import matplotlib.pyplot as plt
 from collections import Counter
+import matplotlib.pyplot as plt
 import global_variable as gv
 
 # 初始化一個空字典來存儲合成鍵和其出現次數
@@ -70,25 +70,12 @@ def process_files_in_directory(from_path, destination_path):
     print(f"End time: {time_end}")
     print(f"Total time: {time_end - time_start}")
 
-def main():
+def draw_pie_chart(data_dict):
     """
-    主函數，負責調用其他函數以完成 XML 檔案的分割和儲存。
+    繪製餅狀圖來表示 data_dict 中各個值的出現頻率。
     """
-    process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory)
-    process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
+    frequency_counter = Counter(data_dict.values())
 
-    # print("Composite Keys with Frequency Greater Than 1:")
-    # keys_with_frequency_gt_1 = {}
-    # for key, value in composite_key_frequency_dict.items():
-    #     if value > 1:
-    #         print(f"{key}: {value}")
-    #         keys_with_frequency_gt_1[key] = value
-
-    # 統計每個出現頻率的 key 數量
-    frequency_counter = Counter(composite_key_frequency_dict.values())
-    print(f"Frequency of keys: {frequency_counter}")
-
-    # 繪製餅狀圖
     labels = [f"{k} times" for k in frequency_counter.keys()]
     sizes = list(frequency_counter.values())
     colors = ['blue', 'red', 'green', 'yellow']  # 添加更多顏色，如果有更多種出現次數
@@ -100,6 +87,16 @@ def main():
     plt.axis('equal')  # 確保餅狀圖是個圓形
     plt.title('Distribution of Key Frequencies')
     plt.show()
+
+def main():
+    """
+    主函數，負責調用其他函數以完成 XML 檔案的分割和儲存。
+    """
+    process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory)
+    process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
+
+    # 調用繪製餅狀圖的方法
+    draw_pie_chart(composite_key_frequency_dict)
 
 if __name__ == "__main__":
     main()
