@@ -90,8 +90,7 @@ def draw_pie_chart(*data_dicts):
         frequency_counter = Counter(data_dict.values())
         labels = [f"{k} times" for k in frequency_counter.keys()]
         sizes = list(frequency_counter.values())
-        # colors = ['blue', 'red', 'green', 'yellow']
-        colors = ['#FF4500', '#32CD32', '#1E90FF']
+        colors = ['#7B99FA', '#53CDD8', '#96EAB7']
         explode = [0.1] * len(labels)
 
         plt.pie(sizes, explode=explode, labels=labels, colors=colors,
