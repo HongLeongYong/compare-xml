@@ -5,6 +5,7 @@
 import os
 import time
 import xml.etree.ElementTree as ET
+import matplotlib.pyplot as plt
 import global_variable as gv
 
 # 初始化一個空字典來存儲合成鍵和其出現次數
@@ -76,9 +77,21 @@ def main():
     process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory)
 
     print("Composite Keys with Frequency Greater Than 1:")
+    keys_with_frequency_gt_1 = {}
     for key, value in composite_key_frequency_dict.items():
         if value > 1:
             print(f"{key}: {value}")
+            keys_with_frequency_gt_1[key] = value
+
+    # 繪製圖表
+    plt.figure(figsize=(10, 6))
+    keys = list(keys_with_frequency_gt_1.keys())
+    values = list(keys_with_frequency_gt_1.values())
+    plt.barh(keys, values, color='blue')
+    plt.xlabel('Frequency')
+    plt.ylabel('Composite Keys')
+    plt.title('Composite Keys with Frequency Greater Than 1')
+    plt.show()
 
 if __name__ == "__main__":
     main()
