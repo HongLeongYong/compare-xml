@@ -76,9 +76,21 @@ def process_files_in_directory(from_path, destination_path, frequency_dict):
     print(f"End time: {time_end}")
     print(f"Total time: {time_end - time_start}")
 
-def func(pct, allvals):
-    absolute = int(round(pct/100.*sum(allvals)))
-    return "{:d} xml \n({:1.1f}%)".format(absolute, pct)
+def format_pie_chart_labels(pct, allvals):
+    """
+    格式化餅圖的標籤。
+
+    參數:
+    pct (float): 當前區塊的百分比。
+    allvals (list): 包含所有區塊值的列表。
+
+    返回值:
+    str: 顯示絕對頻率和百分比的格式化字串。
+    """
+    # 計算絕對頻率（經過四捨五入）
+    absolute = int(round(pct / 100. * sum(allvals)))
+    # 使用 f-string 返回格式化字串
+    return f"{absolute} xml \n({pct:1.1f}%)"
 
 def draw_pie_chart(*data_dicts):
     """
@@ -95,8 +107,11 @@ def draw_pie_chart(*data_dicts):
         colors = ['#7B99FA', '#53CDD8', '#96EAB7', 'F1F3B8']
         explode = [0.1] * len(labels)
 
+        # 使用 functools.partial 或額外的參數來傳遞 sizes
+        autopct = lambda pct, sizes=sizes: format_pie_chart_labels(pct, sizes)
+
         plt.pie(sizes, explode=explode, labels=labels, colors=colors,
-                autopct=lambda pct: func(pct, sizes), shadow=True, startangle=90)
+                autopct=autopct, shadow=True, startangle=90)
         plt.axis('equal')
         plt.title(f'Distribution of Key Frequencies {index}')
 
