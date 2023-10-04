@@ -77,7 +77,7 @@ def process_files_in_directory(from_path, destination_path, frequency_dict):
     print(f"Total time: {time_end - time_start}")
 
 def func(pct, allvals):
-    absolute = int(pct/100.*sum(allvals))
+    absolute = int(round(pct/100.*sum(allvals)))
     return "{:d} times\n({:1.1f}%)".format(absolute, pct)
 
 def draw_pie_chart(*data_dicts):
@@ -111,6 +111,16 @@ def main():
 
     process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory, composite_key_frequency_dict_before)
     process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory, composite_key_frequency_dict_after)
+
+    # before - 印出出現次數大於 2 的 key 值
+    for key, value in composite_key_frequency_dict_before.items():
+        if value > 2:
+            print(f"before key '{key}' appears {value} times.")
+
+    # after - 印出出現次數大於 2 的 key 值
+    for key, value in composite_key_frequency_dict_after.items():
+        if value > 2:
+            print(f"after key '{key}' appears {value} times.")
 
     draw_pie_chart(composite_key_frequency_dict_before, composite_key_frequency_dict_after)
 
