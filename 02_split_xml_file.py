@@ -46,7 +46,11 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
         else:
             frequency_dict[composite_key] = 1
 
-        output_name = f"{doc_temp_id}_{bp_id}_{commission_contract}_{policy_id}_{frequency_dict[composite_key]}.xml"
+        output_name = f"{doc_temp_id}_\
+                        {bp_id}_\
+                        {commission_contract}_\
+                        {policy_id}_\
+                        {frequency_dict[composite_key]}.xml"
         output_name = output_name.replace('/', '_')
 
         tree.write(os.path.join(destination_directory, output_name),
@@ -124,8 +128,13 @@ def main():
     composite_key_frequency_dict_before = {}
     composite_key_frequency_dict_after = {}
 
-    process_files_in_directory(gv.before_big_file_directory, gv.before_file_directory, composite_key_frequency_dict_before)
-    process_files_in_directory(gv.after_big_file_directory, gv.after_file_directory, composite_key_frequency_dict_after)
+    process_files_in_directory(gv.before_big_file_directory,
+                            gv.before_file_directory,
+                            composite_key_frequency_dict_before)
+
+    process_files_in_directory(gv.after_big_file_directory,
+                            gv.after_file_directory,
+                            composite_key_frequency_dict_after)
 
     # before - 印出出現次數>= 2 的 key 值
     for key, value in composite_key_frequency_dict_before.items():
