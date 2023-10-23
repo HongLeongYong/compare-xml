@@ -41,7 +41,7 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
 
             # 對 CT02 做特別處理
             if doc_temp_id == 'CT02':
-                policy_id = root.find('.//FORM_ID').text
+                policy_id = root.find('.//FORMID').text
         
         except AttributeError:
             if policy_id_full is None:
