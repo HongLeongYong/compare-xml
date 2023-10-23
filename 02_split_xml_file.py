@@ -38,6 +38,11 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
                 policy_id = root.find('.//POLICY1').text
             else:
                 policy_id = policy_id_full[:32]
+
+            # 對 CT02 做特別處理
+            if doc_temp_id == 'CT02':
+                policy_id = root.find('.//FORM_ID').text
+        
         except AttributeError:
             if policy_id_full is None:
                 policy_id = "None"
