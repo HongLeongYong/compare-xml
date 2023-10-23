@@ -42,6 +42,10 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
             # 對 CT02 做特別處理
             if doc_temp_id == 'CT02':
                 policy_id = root.find('.//FORMID').text
+
+            # 對 CT35 做特殊處理
+            if doc_temp_id == 'CT35':
+                release_date = root.find('.//RM_DATE').text
         
         except AttributeError:
             if policy_id_full is None:
