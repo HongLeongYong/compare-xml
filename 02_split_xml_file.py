@@ -46,11 +46,11 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
         else:
             frequency_dict[composite_key] = 1
 
-        output_name = f"{doc_temp_id}_\
-                        {bp_id}_\
-                        {commission_contract}_\
-                        {policy_id}_\
-                        {frequency_dict[composite_key]}.xml"
+        output_name = f"{doc_temp_id}_"\
+                    f"{bp_id}_"\
+                    f"{commission_contract}_"\
+                    f"{policy_id}_"\
+                    f"{frequency_dict[composite_key]}.xml"
         output_name = output_name.replace('/', '_')
 
         tree.write(os.path.join(destination_directory, output_name),
