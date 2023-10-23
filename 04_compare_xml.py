@@ -78,6 +78,9 @@ def extract_blocks(tree):
     '''
     迭代第一層子節點，並將每個子節點的 key 與 index[] 存入 blocks
     blocks = {0: ["cd_post_doc", "first 5 text"], ....}
+    
+    針對每一個 blocks , 需要提供 key 來進行比對
+    第一次比對用 cd_post_doc 或  first 3 text, 第二次比對用 first 5 text
     '''
     blocks = {}
     for index, child in enumerate(tree):
