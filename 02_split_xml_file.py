@@ -32,7 +32,9 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
             # if doc_temp_id in gv.z006_list: print(f'z006: {doc_temp_id}')
             bp_id = root.find('.//BUSINESS_PARTNER_ID').text
             commission_contract = root.find('.//COMMISSION_CONTRACT').text
-            policy_id = root.find('.//POLICY_ID').text
+            release_date = root.find('.//RELEASE_DATE').text
+            policy_id_full = root.find('.//POLICY_ID').text
+            policy_id = policy_id_full[:32]
             if policy_id is None:
                 policy_id = root.find('.//POLICY1').text
         except AttributeError:
@@ -40,13 +42,14 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
                 policy_id = "None"
 
         # 計算出現次數
-        composite_key = f"{doc_temp_id}_{bp_id}_{commission_contract}_{policy_id}"
+        composite_key = f"{doc_temp_id}_{release_date}_{bp_id}_{commission_contract}_{policy_id}"
         if composite_key in frequency_dict:
             frequency_dict[composite_key] += 1
         else:
             frequency_dict[composite_key] = 1
 
         output_name = f"{doc_temp_id}_"\
+                    f"{release_date}_"\
                     f"{bp_id}_"\
                     f"{commission_contract}_"\
                     f"{policy_id}_"\
