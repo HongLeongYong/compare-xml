@@ -34,11 +34,12 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
             commission_contract = root.find('.//COMMISSION_CONTRACT').text
             release_date = root.find('.//RELEASE_DATE').text
             policy_id_full = root.find('.//POLICY_ID').text
-            policy_id = policy_id_full[:32]
             if policy_id is None:
                 policy_id = root.find('.//POLICY1').text
+            else:
+                policy_id = policy_id_full[:32]
         except AttributeError:
-            if policy_id is None:
+            if policy_id_full is None:
                 policy_id = "None"
 
         # 計算出現次數
