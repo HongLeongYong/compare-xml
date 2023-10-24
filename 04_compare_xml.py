@@ -24,10 +24,10 @@ patterns = [re.compile(p) for p in [
     '<DELIVERYTIME>.*</DELIVERYTIME>',
     '<ACTIONTIME>.*</ACTIONTIME>',
     '<TERMINATION_REASON>.*</TERMINATION_REASON>', 
-    '<TERMINATION_REASON/>',
+    '<TERMINATION_REASON />',
     '<CONTENT>.*</CONTENT>',
     '<ADDITIONAL_INFO_1>.*</ADDITIONAL_INFO_1>',
-    '<ADDITIONAL_INFO_1/>'
+    '<ADDITIONAL_INFO_1 />'
 ]]
 
 
