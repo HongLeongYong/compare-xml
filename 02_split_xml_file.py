@@ -32,23 +32,26 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
             # if doc_temp_id in gv.z006_list: print(f'z006: {doc_temp_id}')
             bp_id = root.find('.//BUSINESS_PARTNER_ID').text
             commission_contract = root.find('.//COMMISSION_CONTRACT').text
-            release_date = root.find('.//RELEASE_DATE').text
-            policy_id_full = root.find('.//POLICY_ID').text
-            if policy_id_full is None:
-                policy_id = root.find('.//POLICY1').text
-            else:
-                policy_id = policy_id_full[:32]
-
-            # 對 CT02 做特別處理
-            if doc_temp_id == 'CT02':
-                policy_id = root.find('.//FORMID').text
 
             # 對 CT35 做特殊處理
             if doc_temp_id == 'CT35':
                 release_date = root.find('.//RM_DATE').text
+            else:
+                release_date = root.find('.//RELEASE_DATE').text
+
+            # 對 CT02 做特別處理
+            if doc_temp_id == 'CT02':
+                policy_id = root.find('.//FORMID').text
+            else:
+                policy_id = root.find('.//POLICY_ID').text
+                policy_id = policy_id[:32]
+
+            # 如果 policy_id 為 None，則使用 POLICY1
+            if policy_id is None:
+                policy_id = root.find('.//POLICY1').text
         
         except AttributeError:
-            if policy_id_full is None:
+            if policy_id is None:
                 policy_id = "None"
 
         # 計算出現次數
