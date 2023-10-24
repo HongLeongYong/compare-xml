@@ -34,7 +34,7 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
             commission_contract = root.find('.//COMMISSION_CONTRACT').text
             release_date = root.find('.//RELEASE_DATE').text
             policy_id_full = root.find('.//POLICY_ID').text
-            if policy_id is None:
+            if policy_id_full is None:
                 policy_id = root.find('.//POLICY1').text
             else:
                 policy_id = policy_id_full[:32]
