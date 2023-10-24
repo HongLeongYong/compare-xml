@@ -33,23 +33,22 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
             bp_id = root.find('.//BUSINESS_PARTNER_ID').text
             commission_contract = root.find('.//COMMISSION_CONTRACT').text
 
-            # 對 CT35 做特殊處理
+            # release_date , 對 CT35 做特殊處理
             if doc_temp_id == 'CT35':
                 release_date = root.find('.//RM_DATE').text
             else:
                 release_date = root.find('.//RELEASE_DATE').text
 
-            # 對 CT02 做特別處理
+            # policy_id , 對 CT02 做特別處理
             if doc_temp_id == 'CT02':
                 policy_id = root.find('.//FORMID').text
             else:
                 policy_id = root.find('.//POLICY_ID').text
 
-            # 如果 policy_id 為 None，則使用 POLICY1
-            if policy_id is None:
-                policy_id = root.find('.//POLICY1').text
-            else:
-                policy_id = policy_id[:32]
+                if policy_id is None:
+                    policy_id = root.find('.//POLICY1').text
+                else:
+                    policy_id = policy_id[:32]
         
         except AttributeError:
             if policy_id is None:
