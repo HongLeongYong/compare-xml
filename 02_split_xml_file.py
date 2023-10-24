@@ -44,11 +44,12 @@ def split_and_save_xml_segments(filename, destination_directory, frequency_dict)
                 policy_id = root.find('.//FORMID').text
             else:
                 policy_id = root.find('.//POLICY_ID').text
-                policy_id = policy_id[:32]
 
             # 如果 policy_id 為 None，則使用 POLICY1
             if policy_id is None:
                 policy_id = root.find('.//POLICY1').text
+            else:
+                policy_id = policy_id[:32]
         
         except AttributeError:
             if policy_id is None:
