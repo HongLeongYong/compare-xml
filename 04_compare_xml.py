@@ -21,11 +21,17 @@ patterns = [re.compile(p) for p in [
     '<TIMESTAMP>.*</TIMESTAMP>',
     '<CORR_KEY>.*?</CORR_KEY>',
     '<CORR_REQ_CREATION_DATE>.*</CORR_REQ_CREATION_DATE>',
+    # 客製化調整
     '<DELIVERYTIME>.*</DELIVERYTIME>',
     '<ACTIONTIME>.*</ACTIONTIME>',
+    '<CHUSR>.*</CHUSR>',
+    '<CHDAT>.*</CHDAT>',
+    '<CHTIM>.*</CHTIM>',
+    # 修改內容
+    '<CONTENT>.*</CONTENT>', 
+     # 新增欄位
     '<TERMINATION_REASON>.*</TERMINATION_REASON>', 
     '<TERMINATION_REASON />',
-    '<CONTENT>.*</CONTENT>',
     '<ADDITIONAL_INFO_1>.*</ADDITIONAL_INFO_1>',
     '<ADDITIONAL_INFO_1 />'
 ]]
