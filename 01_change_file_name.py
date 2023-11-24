@@ -16,3 +16,5 @@ def run(directory):
 # 執行函數
 run(gv.before_big_file_directory)
 run(gv.after_big_file_directory)
+
+# 輸出結果
